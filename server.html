@@ -1,6 +1,61 @@
 <!doctype html>
 <html>
-<body>
-    <canvas id="canvas" width="800" height="600"></canvas>
-</body>
+  <head>
+	<style type="text/css">
+	html, body {
+		margin: 0px;
+	}
+	canvas {
+		display: block;
+		border:2px;
+		border-style: solid;
+		border-color: #000000;
+		margin-top: 2px;
+		margin-left: 2px;
+	}
+	</style>
+  </head>
+  <body>
+    <canvas id="myCanvas"></canvas>
+    <script>
+	
+      function writeMessage(canvas, message) {
+        var context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.font = '18pt Calibri';
+        context.fillStyle = 'black';
+        context.fillText(message, 10, 25);
+      }
+	  
+      function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      }
+
+	 window.onload = function() {
+		var canvas = document.getElementById("myCanvas"),
+			context = canvas.getContext("2d");
+			
+			canvas.width = window.innerWidth-8,
+			canvas.height = window.innerHeight-8;
+			
+			window.canvas = canvas;
+			window.context = context;
+			
+			canvas.addEventListener('mousemove', function(evt) {
+			var mousePos = getMousePos(canvas, evt);
+			var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+			writeMessage(canvas, message);
+		  }, false);
+	}
+	
+	window.onresize = function() {
+		canvas.width = window.innerWidth-8,
+		canvas.height = window.innerHeight-8;
+	};
+    </script>
+  </body>
 </html>
