@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+	<head>
+		<style type="text/css">
+			html, body {
+				margin: 0px;
+			}
+			
+			canvas {
+				border:2px;
+				display: block;
+				margin-top: 2px;
+				margin-left: 2px;
+				border-style: solid;
+				border-color: #000000;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas"></canvas>
+		<script>
+
+			var selectedPolygon = null;
+
+			var poligono1 = {name: "poligono1", 
+							 color: "#AA0000",
+			                 connected: false,
+							 vertex:  [[0, 0], [10, 0], [10, 10], [0, 10]],
+							 offsetX: 500,
+							 offsetY: 500
+			};
+
+			var poligono2 = {name: "poligono2",
+							 color: "#CC00AA",
+			                 connected: false,
+							 vertex:  [[0, 0], [60, 0], [60, 60]],
+							 offsetX: 200,
+							 offsetY: 200
+			};
+
+			var poligonos = [ poligono1, poligono2 ];
+
+			function setSize(canvas) {
+				canvas.width = window.innerWidth - 8,
+				canvas.height = window.innerHeight - 8;
+			}
+
+			function writeMessage(context, message) {
+				context.font = '18pt Calibri';
+				context.fillStyle = 'black';
+				context.fillText(message, 10, 25);
+			}
+
+			function draw(canvas, evt) {
+				var context = canvas.getContext('2d');
+				context.clearRect(0, 0, canvas.width, canvas.height);
+
+				var currentPoint = getMousePos(canvas, evt);
+				var message = 'Mouse position: ' + currentPoint.x + ',' + currentPoint.y;
+				writeMessage(context, message);
+
+				poligonos.forEach(function(p) {
+					context.beginPath();
+					context.fillStyle = p.color;
+					for (var i=0; i<p.vertex.length; i+=1) {
+						if (i === 0) {
+							context.moveTo(p.vertex[i][0]+p.offsetX, p.vertex[i][1]+p.offsetY);
+						}
+						context.lineTo(p.vertex[i][0]+p.offsetX, p.vertex[i][1]+p.offsetX);
+					}
+					context.lineTo(p.offsetX, p.offsetX);
+					context.fill();
+					context.closePath();
+				});		
+			}
+
+
+			function getMousePos(canvas, evt) {
+				var rect = canvas.getBoundingClientRect();
+				return {
+					x: evt.clientX - rect.left,
+					y: evt.clientY - rect.top
+				};
+			}
+
+			function findSelectedPolygon(mousepos) {
+				poligonos.forEach(function(p) {
+					var result = inside(mousepos.x, mousepos.y, p.offsetX, p.offsetY, p.vertex);
+					if (result) {
+						console.log(p.name);
+					}
+				});
+			}
+
+			function inside(pointX, pointY, offsetX, offsetY, vs) {
+				// ray-casting algorithm based on
+				// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+				var x = pointX, y = pointY;
+
+				var inside = false;
+				for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+					var xi = vs[i][0]+offsetX, yi = vs[i][1]+offsetY;
+					var xj = vs[j][0]+offsetX, yj = vs[j][1]+offsetY;
+
+					var intersect = ((yi > y) != (yj > y))
+						&& (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+					if (intersect) inside = !inside;
+				}
+
+				return inside;
+			}
+
+			window.onload = function() {
+				var canvas = document.getElementById("myCanvas");
+				context = canvas.getContext("2d");
+				setSize(canvas);
+
+				window.canvas = canvas;
+				window.context = context;
+
+				canvas.addEventListener('click', function(evt) {
+					var mousePos    = getMousePos(canvas, evt);
+					selectedPolygon = findSelectedPolygon(mousePos);
+				}, false);
+
+				canvas.addEventListener('mousemove', function(evt) {
+					draw(canvas, evt);
+				}, false);
+			}
+
+			window.onresize = function() {
+				setSize(window.canvas);
+			};
+		</script>
+	</body>
+</html>
