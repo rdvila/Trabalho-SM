@@ -1,12 +1,12 @@
 {
 	"id": "00001",
 	"nome": "exercicio01",
-	"sombra": "X Y X Y X Y X Y X Y X Y",
+	"sombra": [[X, Y], [X, Y], [X, Y], [X, Y], [X, Y], [X, Y]",
 	"dificuldade": 999
 	"tempo": 9999
 	"poligonos": [
-		"X Y X Y X Y X Y",
-		"X Y X Y X Y X Y",
-		"X Y X Y X Y X Y"
+		[[X, Y], [X, Y], [X, Y], [X, Y]],
+		[[X, Y], [X, Y], [X, Y], [X, Y]],
+		[[X, Y], [X, Y], [X, Y], [X, Y]]
 	]
 }
