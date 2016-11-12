@@ -37,6 +37,8 @@
 
 			var selectedPolygon = null;
 			var startDrag       = false;
+			var onClickOffsetCursorX = 0;
+			var onClickOffsetCursorY = 0;
 
 			var poligono1 = {name: "poligono1", 
 							 color: "#AA0000",
@@ -173,8 +175,8 @@
 					var lastOffsetX = selectedPolygon.offsetX;
 					var lastOffsetY = selectedPolygon.offsetY;
 
-					selectedPolygon.offsetX = mousePos.x;
-					selectedPolygon.offsetY = mousePos.y;
+					selectedPolygon.offsetX = mousePos.x - onClickOffsetCursorX;
+					selectedPolygon.offsetY = mousePos.y - onClickOffsetCursorY;
 
 					if (limits(selectedPolygon)) {
 						selectedPolygon.offsetX = lastOffsetX;
@@ -198,9 +200,20 @@
 					if (currentSelectedPolygon !== null) {
 						selectedPolygon = currentSelectedPolygon;
 						startDrag       = true;
+
+						onClickOffsetCursorX = mousePos.x -
+							(selectedPolygon.vertex[0][0]+selectedPolygon.offsetX)
+
+						onClickOffsetCursorY = mousePos.y -
+							(selectedPolygon.vertex[0][1]+selectedPolygon.offsetY)
+
 					} else {
 						selectedPolygon = null;
 						startDrag       = false;
+
+						onClickOffsetCursorX = 0;
+						onClickOffsetCursorY = 0;
+
 					}
 				}, false);
 
