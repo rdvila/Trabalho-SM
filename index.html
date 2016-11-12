@@ -41,7 +41,10 @@
 			                 connected: false,
 							 vertex:  [[122,185], [204,319], [40,297]],
 							 offsetX: 40,
-							 offsetY: 185
+							 offsetY: 185,
+							 minX: 0,
+							 minY: 0
+
 			};
 
 			var poligono2 = {name: "poligono2",
@@ -49,7 +52,9 @@
 			                 connected: false,
 							 vertex:  [ [204,319],  [153,466], [40,297]],
 							 offsetX: 40,
-							 offsetY: 297
+							 offsetY: 297,
+							 minX: 0,
+							 minY: 0
 			};
 
 			var poligono3 = {name: "poligono3",
@@ -57,7 +62,9 @@
 			                 connected: false,
 							 vertex:  [ [204,319], [263,360], [153,466]],
 							 offsetX: 153,
-							 offsetY: 319
+							 offsetY: 319,
+							 minX: 0,
+							 minY: 0
 			};
 
 			var poligono4 = {name: "poligono4",
@@ -65,7 +72,9 @@
 			                 connected: false,
 							 vertex:  [ [204,319], [314,217], [535,208], [358,422], [263,360]],
 							 offsetX: 204,
-							 offsetY: 208
+							 offsetY: 208,
+							 minX: 0,
+							 minY: 0
 			};
 
 			var sombra = {
@@ -240,6 +249,14 @@
 
 					selectedPolygon.offsetX = mousePos.x - onClickOffsetCursorX;
 					selectedPolygon.offsetY = mousePos.y - onClickOffsetCursorY;
+					
+					var distanceX = Math.abs(selectedPolygon.offsetX - selectedPolygon.minX);
+					var distanceY = Math.abs(selectedPolygon.offsetY - selectedPolygon.minY);
+					
+					if (distanceX < 30 && distanceY < 30) {
+						selectedPolygon.offsetX = selectedPolygon.minX;
+					    selectedPolygon.offsetY = selectedPolygon.minY;
+					}
 
 					if (limits(selectedPolygon)) {
 						selectedPolygon.offsetX = lastOffsetX;
@@ -256,6 +273,8 @@
 				}
 				polygon.offsetX = min.x;
 				polygon.offsetY = min.y;
+				polygon.minX = min.x;
+				polygon.minY = min.y;
 				
 				return polygon;
 			}
