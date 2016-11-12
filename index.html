@@ -20,6 +20,21 @@
 		<canvas id="myCanvas"></canvas>
 		<script>
 
+			///
+			///
+			/// Main Loop
+			///
+			///
+			var ONE_FRAME_TIME = 1000 / 30;
+			var mainloop = function() {
+				var evt = window.mouseEventObject;
+
+				// as vezes o evt está undefined =(
+				if (evt !== undefined) {
+					draw(canvas, evt);
+				}
+		   };
+
 			var selectedPolygon = null;
 			var startDrag       = false;
 
@@ -87,7 +102,7 @@
 			function findSelectedPolygon(mousepos) {
 				var selectedPolygon = null;
 				poligonos.forEach(function(p) {
-					var result = inside(mousepos.x, mousepos.y, p.offsetX, p.offsetY, p.vertex);
+					var result = insidePolygon(mousepos.x, mousepos.y, p.offsetX, p.offsetY, p.vertex);
 					if (result) {
 						selectedPolygon = p;
 					}
@@ -96,7 +111,44 @@
 				return selectedPolygon;
 			}
 
-			function inside(pointX, pointY, offsetX, offsetY, vs) {
+			function limits(polygon) {
+				var bbox = bboxPolygon(polygon.vertex);
+				if (     bbox.min.x+polygon.offsetX < 0
+				      || bbox.max.x+polygon.offsetX > window.canvas.width
+					  || bbox.min.y+polygon.offsetY < 0
+					  || bbox.max.y+polygon.offsetY > window.canvas.height) {
+						  return true;
+					  }
+					  return false;
+			}
+
+			function bboxPolygon(vs) {
+				var maxX = -1, maxY = -1, minX = 999999, minY = 999999;
+				for (var i = 0; i < vs.length; i++) {
+					var x = vs[i][0];
+					var y = vs[i][1];
+
+					if (x < minX) {
+						minX = x;
+					}
+
+					if (x > maxX) {
+						maxX = x;
+					}
+
+					if (y < minY) {
+						minY = y;
+					}
+
+					if (y > maxY) {
+						maxY = y;
+					}
+				}
+
+				return {min: {x: minX, y: minY}, max: {x: maxX, y: maxY}};
+			}
+
+			function insidePolygon(pointX, pointY, offsetX, offsetY, vs) {
 				// ray-casting algorithm based on
 				// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 
@@ -117,11 +169,21 @@
 
 			function dragSelectedPolygon(mousePos) {
 				if (startDrag === true && selectedPolygon !== null) {
+
+					var lastOffsetX = selectedPolygon.offsetX;
+					var lastOffsetY = selectedPolygon.offsetY;
+
 					selectedPolygon.offsetX = mousePos.x;
 					selectedPolygon.offsetY = mousePos.y;
+
+					if (limits(selectedPolygon)) {
+						selectedPolygon.offsetX = lastOffsetX;
+						selectedPolygon.offsetY = lastOffsetY;
+					}
 				}
 			}
 
+			// Construtor
 			window.onload = function() {
 				var canvas = document.getElementById("myCanvas");
 				context = canvas.getContext("2d");
@@ -149,14 +211,19 @@
 				}, false);
 
 				canvas.addEventListener('mousemove', function(evt) {
-					draw(canvas, evt);
+					// adiciona o mouse event para um objeto na window, pois o main loop necessita saber da posição atual do mouse
+					window.mouseEventObject = evt;
 					dragSelectedPolygon(getMousePos(canvas, evt));
 				}, false);
+
+				// start Main loop
+				setInterval( mainloop, ONE_FRAME_TIME );
 			}
 
 			window.onresize = function() {
 				setSize(window.canvas);
 			};
+
 		</script>
 	</body>
 </html>
