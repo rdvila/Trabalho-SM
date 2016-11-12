@@ -28,11 +28,7 @@
 			var ONE_FRAME_TIME = 1000 / 30;
 			var mainloop = function() {
 				var evt = window.mouseEventObject;
-
-				// as vezes o evt está undefined =(
-				if (evt !== undefined) {
 					draw(canvas, evt);
-				}
 		   };
 
 			var selectedPolygon = null;
@@ -56,6 +52,22 @@
 							 offsetY: 200
 			};
 
+			var sombra = {
+				name: "sombra",
+				color: "#666666",
+				completed: false,
+				vertex: [[122,185],
+						 [204,319],
+						 [314,217],
+						 [535,208],
+						 [358,422],
+						 [263,360],
+				         [153,466],
+						 [40,297]],
+				offsetX: 0,
+				offsetY: 0
+			}
+
 			var poligonos = [ poligono1, poligono2 ];
 
 			function setSize(canvas) {
@@ -73,10 +85,23 @@
 				var context = canvas.getContext('2d');
 				context.clearRect(0, 0, canvas.width, canvas.height);
 
+				// as vezes o evt está undefined =(
+				if (evt !== undefined) {
+					drawMessageCursorPosition(canvas, context, evt);
+				}
+				drawSombra(context);
+				drawPolygons(context);
+
+			}
+
+			function drawMessageCursorPosition(canvas, context, evt) {
 				var currentPoint = getMousePos(canvas, evt);
 				var message = 'Mouse position: ' + currentPoint.x + ',' + currentPoint.y;
 				writeMessage(context, message);
+			}
 
+			function drawPolygons(context) {
+				
 				poligonos.forEach(function(p) {
 					context.beginPath();
 					context.fillStyle = p.color;
@@ -89,7 +114,24 @@
 					context.lineTo(p.vertex[0][0]+p.offsetX, p.vertex[0][1]+p.offsetY);
 					context.fill();
 					context.closePath();
-				});		
+				});	
+			}
+
+			function drawSombra(context) {
+				context.beginPath();
+				context.fillStyle = sombra.color;
+				for (var i=0; i<sombra.vertex.length; i+=1) {
+						if (i === 0) {
+							context.moveTo(sombra.vertex[i][0]+sombra.offsetX,
+							               sombra.vertex[i][1]+sombra.offsetY);
+						}
+						context.lineTo(sombra.vertex[i][0]+sombra.offsetX,
+						               sombra.vertex[i][1]+sombra.offsetY);
+				}
+				context.lineTo(sombra.vertex[0][0]+sombra.offsetX,
+				               sombra.vertex[0][1]+sombra.offsetY);
+				context.fill();
+				context.closePath();
 			}
 
 
