@@ -2,6 +2,12 @@
 <html>
 	<head>
 		<style type="text/css">
+
+			@font-face {
+				font-family:"Sigmar One";
+				src: url("SigmarOne.ttf") /* TTF file for CSS3 browsers */
+			}
+
 			html, body {
 				margin: 0px;
 			}
@@ -17,6 +23,7 @@
 		</style>
 	</head>
 	<body>
+		<img id="background" width="0" height="0" src="background.jpg" style="visibility: hidden; float: right;">
 		<canvas id="myCanvas"></canvas>
 		<script>
 
@@ -35,6 +42,7 @@
 			var startDrag       = false;
 			var onClickOffsetCursorX = 0;
 			var onClickOffsetCursorY = 0;
+			var score = 0;
 
 			var poligono1 = {name: "poligono1", 
 							 color: "#AA0000",
@@ -43,7 +51,8 @@
 							 offsetX: 40,
 							 offsetY: 185,
 							 minX: 0,
-							 minY: 0
+							 minY: 0,
+							 attached: false
 
 			};
 
@@ -54,7 +63,8 @@
 							 offsetX: 40,
 							 offsetY: 297,
 							 minX: 0,
-							 minY: 0
+							 minY: 0,
+							 attached: false
 			};
 
 			var poligono3 = {name: "poligono3",
@@ -64,7 +74,8 @@
 							 offsetX: 153,
 							 offsetY: 319,
 							 minX: 0,
-							 minY: 0
+							 minY: 0,
+							 attached: false
 			};
 
 			var poligono4 = {name: "poligono4",
@@ -74,7 +85,8 @@
 							 offsetX: 204,
 							 offsetY: 208,
 							 minX: 0,
-							 minY: 0
+							 minY: 0,
+							 attached: false
 			};
 
 			var sombra = {
@@ -105,9 +117,9 @@
 				canvas.height = window.innerHeight - 8;
 			}
 
-			function writeMessage(context, message) {
-				context.font = '18pt Calibri';
-				context.fillStyle = 'black';
+			function writeMessage(context, message, color) {
+				context.font = '24pt Sigmar One';
+				context.fillStyle = color;
 				context.fillText(message, 10, 25);
 			}
 
@@ -115,23 +127,52 @@
 				var context = canvas.getContext('2d');
 				context.clearRect(0, 0, canvas.width, canvas.height);
 
-				// as vezes o evt está undefined =(
-				if (evt !== undefined) {
-					drawMessageCursorPosition(canvas, context, evt);
-				}
+				drawBackground(context);
 
-				drawBboxSombra(context);
+				// as vezes o evt está undefined =(
+				//if (evt !== undefined) {
+				//	drawMessageCursorPosition(canvas, context, evt);
+				//}
+
+				//drawBboxSombra(context);
 				drawSombra(context);
 
-				drawBboxPolygons(context);
+				//drawBboxPolygons(context);
 				drawPolygons(context);
 
+				drawScore(context);
+
+				drawSelectedPolygonOnTop(context);
+
+			}
+
+			function drawBackground(context) {
+				var img = document.getElementById("background");
+    			context.drawImage(img, 0, 0);
+			}
+			
+			function drawSelectedPolygonOnTop(context) {
+				if (selectedPolygon != null && selectedPolygon) {
+					var p = selectedPolygon;
+					context.beginPath();
+					context.fillStyle = p.color;
+						for (var i=0; i<p.vertex.length; i+=1) {
+							if (i === 0) {
+								context.moveTo(p.vertex[i][0]+p.offsetX, p.vertex[i][1]+p.offsetY);
+							}
+							context.lineTo(p.vertex[i][0]+p.offsetX, p.vertex[i][1]+p.offsetY);
+						}
+						context.lineTo(p.vertex[0][0]+p.offsetX, p.vertex[0][1]+p.offsetY);
+						context.fill();
+						context.closePath();
+				}
 			}
 
 			function drawMessageCursorPosition(canvas, context, evt) {
 				var currentPoint = getMousePos(canvas, evt);
 				var message = 'Mouse position: ' + currentPoint.x + ',' + currentPoint.y;
-				writeMessage(context, message);
+
+				writeMessage(context, message, 'black');
 			}
 
 			function drawPolygons(context) {
@@ -201,6 +242,14 @@
 
 				context.stroke();
 				context.closePath();
+			}
+
+			function drawScore(context) {
+				var message = 'Pontos: ' + score.toString();
+				var color   = '#11445A' 
+				context.font = '40pt Sigmar One';
+				context.fillStyle = color;
+				context.fillText(message, 10, 45);
 			}
 
 
@@ -307,7 +356,9 @@
 			}
 
 			function dragSelectedPolygon(mousePos) {
-				if (startDrag === true && selectedPolygon !== null) {
+				if (startDrag === true &&
+						selectedPolygon !== null &&
+						 selectedPolygon.attached == false) {
 
 					var lastOffsetX = selectedPolygon.offsetX;
 					var lastOffsetY = selectedPolygon.offsetY;
@@ -321,6 +372,8 @@
 					if (distanceX < 30 && distanceY < 30) {
 						selectedPolygon.offsetX = selectedPolygon.minX;
 					    selectedPolygon.offsetY = selectedPolygon.minY;
+						selectedPolygon.attached = true;
+						score += 10;
 					}
 
 					if (limits(selectedPolygon)) {
