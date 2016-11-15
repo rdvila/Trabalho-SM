@@ -119,7 +119,11 @@
 				if (evt !== undefined) {
 					drawMessageCursorPosition(canvas, context, evt);
 				}
+
+				drawBboxSombra(context);
 				drawSombra(context);
+
+				drawBboxPolygons(context);
 				drawPolygons(context);
 
 			}
@@ -161,6 +165,41 @@
 				context.lineTo(sombra.vertex[0][0]+sombra.offsetX,
 				               sombra.vertex[0][1]+sombra.offsetY);
 				context.fill();
+				context.closePath();
+			}
+
+			function drawBboxPolygons(context) {
+				poligonos.forEach(function(p) {
+					var bbox = bboxPolygon(p.vertex);
+					context.beginPath();
+					context.strokeStyle = p.color;
+
+					context.moveTo(bbox.min.x+p.offsetX, bbox.min.y+p.offsetY);
+
+					context.lineTo(bbox.max.x+p.offsetX, bbox.min.y+p.offsetY);
+					context.lineTo(bbox.max.x+p.offsetX, bbox.max.y+p.offsetY);
+					context.lineTo(bbox.min.x+p.offsetX, bbox.max.y+p.offsetY);					
+					context.lineTo(bbox.min.x+p.offsetX, bbox.min.y+p.offsetY);
+
+					context.stroke();
+					context.closePath();
+				});	
+			}
+
+			function drawBboxSombra(context) {
+				var bbox = bboxPolygon(sombra.vertex);
+				var p = sombra;
+				context.beginPath();
+				context.strokeStyle = p.color;
+
+				context.moveTo(bbox.min.x+p.offsetX, bbox.min.y+p.offsetY);
+
+				context.lineTo(bbox.max.x+p.offsetX, bbox.min.y+p.offsetY);
+				context.lineTo(bbox.max.x+p.offsetX, bbox.max.y+p.offsetY);
+				context.lineTo(bbox.min.x+p.offsetX, bbox.max.y+p.offsetY);					
+				context.lineTo(bbox.min.x+p.offsetX, bbox.min.y+p.offsetY);
+
+				context.stroke();
 				context.closePath();
 			}
 
@@ -220,6 +259,32 @@
 				}
 
 				return {min: {x: minX, y: minY}, max: {x: maxX, y: maxY}};
+			}
+
+			function bboxPolygonTestAABBAABB(polygon, otherPolygon)
+			{
+				var a = bboxPolygon(polygon.vertex);
+				var b = bboxPolygon(otherPolygon.vertex);
+
+				a.min.x += polygon.offsetX;
+				a.max.x += polygon.offsetX;
+				a.min.y += polygon.offsetY;
+				a.max.y += polygon.offsetY;
+
+				b.min.x += otherPolygon.offsetX;
+				b.max.x += otherPolygon.offsetX;
+				b.min.y += otherPolygon.offsetY;
+				b.max.y += otherPolygon.offsetY;
+				
+				if (b.max.x < a.min.x)
+					return false;
+				if (b.min.x > a.max.x)
+					return false;
+				if (b.max.y < a.min.y)
+					return false;
+				if (b.min.y > a.max.y)
+					return false;
+				return true;
 			}
 
 			function insidePolygon(pointX, pointY, offsetX, offsetY, vs) {
@@ -327,6 +392,50 @@
 				}
 			}
 
+			// coloca os poligonos na posição inicial
+			function polygonsGameStartPosition() {
+				for (var i=0; i<poligonos.length; i++) {
+					var polygon = poligonos[i];
+					var valid   = false;
+					var count   = 0;
+					
+					while (!valid) {
+
+						if (count > 10) {
+							break;
+						}
+						count += 1;
+
+						polygon.offsetX = Math.random() * window.canvas.width;
+						polygon.offsetY = Math.random() * window.canvas.height;
+
+						if (bboxPolygonTestAABBAABB(polygon, sombra)) {
+							valid = false;
+							continue;
+						} else {
+							valid = true;
+						}
+
+						if (limits(polygon)) {
+							valid = false;
+							continue;
+						}
+				
+						for (var j=0; j<poligonos.length; j++) {
+							if (i == j) {continue;}
+							var otherPolygon = poligonos[j];
+							if (bboxPolygonTestAABBAABB(polygon, otherPolygon)) {
+								valid = false;
+								break;
+							} else {
+								valid = true;
+							}	
+						}
+
+					}
+				}
+			}
+
 			// Construtor
 			window.onload = function() {
 				var canvas = document.getElementById("myCanvas");
@@ -370,10 +479,11 @@
 					// adiciona o mouse event para um objeto na window, pois o main loop necessita saber da posição atual do mouse
 					window.mouseEventObject = evt;
 					dragSelectedPolygon(getMousePos(canvas, evt));
+					
 				}, false);
 
 				centralizeSombra();
-				
+				polygonsGameStartPosition()
 
 				// start Main loop
 				setInterval( mainloop, ONE_FRAME_TIME );
