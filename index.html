@@ -94,10 +94,10 @@
 			}
 
 			var poligonos = [
-					normalizePolygon(poligono1),
-					normalizePolygon(poligono2),
-					normalizePolygon(poligono3),
-					normalizePolygon(poligono4)
+					poligono1,
+					poligono2,
+					poligono3,
+					poligono4
 					];
 
 			function setSize(canvas) {
@@ -297,6 +297,36 @@
 				return {x : minX, y: minY};
 			}
 
+			// centraliza a sombra
+			function centralizeSombra() {
+				var bboxSombra    = bboxPolygon(sombra.vertex);
+				var sombraWidth   = bboxSombra.max.x - bboxSombra.min.x;
+				var sombraHeight  = bboxSombra.max.y - bboxSombra.min.y;
+
+				var centerXCanvas = canvas.width  / 2;
+				var centerYCanvas = canvas.height / 2;
+
+				var offsetToCenterX  = centerXCanvas - bboxSombra.min.x;
+				var offsetToCenterY  = centerYCanvas - bboxSombra.min.y;
+
+				var sombraWidthOffset  =   (sombraWidth / 2)  - offsetToCenterX;
+				var sombraHeightOffset =   (sombraHeight / 2) - offsetToCenterY;
+
+				for (var i=0; i< poligonos.length; i++) {
+					var polygon = poligonos[i];
+					for (var j=0; j<polygon.vertex.length; j++) {
+						polygon.vertex[j][0] -= sombraWidthOffset;
+						polygon.vertex[j][1] -= sombraHeightOffset;
+					}
+					normalizePolygon(polygon);
+				}
+
+				for (var j=0; j<sombra.vertex.length; j++) {
+					sombra.vertex[j][0] -= sombraWidthOffset;
+					sombra.vertex[j][1] -= sombraHeightOffset;
+				}
+			}
+
 			// Construtor
 			window.onload = function() {
 				var canvas = document.getElementById("myCanvas");
@@ -341,6 +371,9 @@
 					window.mouseEventObject = evt;
 					dragSelectedPolygon(getMousePos(canvas, evt));
 				}, false);
+
+				centralizeSombra();
+				
 
 				// start Main loop
 				setInterval( mainloop, ONE_FRAME_TIME );
