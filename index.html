@@ -35,6 +35,7 @@
 			var ONE_FRAME_TIME = 1000 / 30;
 			var mainloop = function() {
 				var evt = window.mouseEventObject;
+				update();
 				draw(canvas, evt);
 		   };
 
@@ -43,6 +44,8 @@
 			var onClickOffsetCursorX = 0;
 			var onClickOffsetCursorY = 0;
 			var score = 0;
+			var time  = 20;
+			var win = null;
 
 			var poligono1 = {name: "poligono1", 
 							 color: "#AA0000",
@@ -123,6 +126,19 @@
 				context.fillText(message, 10, 25);
 			}
 
+			function update() {
+				var allAttached = true;
+				poligonos.forEach(function(p) {
+					if (p.attached == false) {
+						allAttached = false;
+					}
+				});
+
+				if (allAttached) {
+					win = true;
+				}
+			}
+
 			function draw(canvas, evt) {
 				var context = canvas.getContext('2d');
 				context.clearRect(0, 0, canvas.width, canvas.height);
@@ -141,10 +157,31 @@
 				drawPolygons(context);
 
 				drawScore(context);
+				drawTime(context);
 
 				drawSelectedPolygonOnTop(context);
 
+				if (win !== null) {
+					if (win) {
+						console.log("Ganhou");
+						drawWinOrLoseMessage(context, "Ganhou", "#009900");
+					} else {
+						console.log("Perdeu");
+						drawWinOrLoseMessage(context, "Perdeu", "#ff3333");
+					}
+				}
+
 			}
+
+			function drawWinOrLoseMessage(context, message, color) {
+				var centerX = window.canvas.width / 2;
+				context.font = '72pt Sigmar One';
+				context.fillStyle = color;
+
+				var textCenter = context.measureText(message).width / 2;
+				console.log( centerX-textCenter);
+				context.fillText(message, centerX-textCenter, 95);
+			} 
 
 			function drawBackground(context) {
 				var img = document.getElementById("background");
@@ -250,6 +287,14 @@
 				context.font = '40pt Sigmar One';
 				context.fillStyle = color;
 				context.fillText(message, 10, 45);
+			}
+
+			function drawTime(context) {
+				var message = 'Tempo: ' + time.toString();
+				var color   = '#11445A' 
+				context.font = '40pt Sigmar One';
+				context.fillStyle = color;
+				context.fillText(message, 10, 85);
 			}
 
 
@@ -358,7 +403,8 @@
 			function dragSelectedPolygon(mousePos) {
 				if (startDrag === true &&
 						selectedPolygon !== null &&
-						 selectedPolygon.attached == false) {
+						 selectedPolygon.attached == false &&
+						 win == null) {
 
 					var lastOffsetX = selectedPolygon.offsetX;
 					var lastOffsetY = selectedPolygon.offsetY;
@@ -471,6 +517,7 @@
 
 						if (limits(polygon)) {
 							valid = false;
+							count -= 1;
 							continue;
 						}
 				
@@ -486,6 +533,15 @@
 						}
 
 					}
+				}
+			}
+
+			function decreaseTime() {
+				if (time <= 0) {
+					win = false;
+				}
+				if (win == null) {
+					time -= 1;
 				}
 			}
 
@@ -540,6 +596,7 @@
 
 				// start Main loop
 				setInterval( mainloop, ONE_FRAME_TIME );
+				setInterval( decreaseTime, 1000 );
 			}
 
 			window.onresize = function() {
