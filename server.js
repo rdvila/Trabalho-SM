@@ -1,7 +1,6 @@
 var http = require('http');
 var jsonFile = require('jsonFile');
 var file = 'teste.json';
-var obj = {name: 'JP'};
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
@@ -21,7 +20,7 @@ app.use(bodyParser.json());
 
 /* Retornar todos os exercícios */
 app.get('/', function (req, res) {
-  res.send('Hello World!');
+  res.send(jsonFile.readFileSync(file));
 });
 
 /* Salva um novo JSON de exercícios */
@@ -34,5 +33,5 @@ app.post('/', function(request, response){
 });
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+  console.log('Servidor inicializado com sucesso na porta 3000!');
 });
