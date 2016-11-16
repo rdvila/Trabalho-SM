@@ -1,0 +1,11 @@
+Baixar e instalar o nodeJS:
+https://nodejs.org/en/
+
+Executar os comandos no node:
+npm install --save jsonfile
+npm install --save express
+npm install --save body-parser
+
+Como executar o servidor:
+1 - Abrir o prompt e ir no local que estão os arquivos
+2 - "node server.js"
