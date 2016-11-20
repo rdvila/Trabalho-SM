@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
 	<head>
 		<style type="text/css">
@@ -44,193 +44,64 @@
 			var onClickOffsetCursorX = 0;
 			var onClickOffsetCursorY = 0;
 			var score = 0;
-			var time  = 2000;
+			var time  = 200;
 			var win = null;
-			
-			//////////////////////// EXERCICIOS ////////////////////////
-			
-			//////////////////////// GATO //////////////////////// 
-			var gato = {
-			   "nome":"gato",
-			   "sombra": {
+
+			var poligono1 = {name: "poligono1", 
+							 color: "#AA0000",
+			                 connected: false,
+							 vertex:  [[122,185], [204,319], [40,297]],
+							 offsetX: 40,
+							 offsetY: 185,
+							 minX: 0,
+							 minY: 0,
+							 attached: false
+
+			};
+
+			var poligono2 = {name: "poligono2",
+							 color: "#CC00AA",
+			                 connected: false,
+							 vertex:  [ [204,319],  [153,466], [40,297]],
+							 offsetX: 40,
+							 offsetY: 297,
+							 minX: 0,
+							 minY: 0,
+							 attached: false
+			};
+
+			var poligono3 = {name: "poligono3",
+							 color: "#CC445A",
+			                 connected: false,
+							 vertex:  [ [204,319], [263,360], [153,466]],
+							 offsetX: 153,
+							 offsetY: 319,
+							 minX: 0,
+							 minY: 0,
+							 attached: false
+			};
+
+			var poligono4 = {name: "poligono4",
+							 color: "#11445A",
+			                 connected: false,
+							 vertex:  [ [204,319], [314,217], [535,208], [358,422], [263,360]],
+							 offsetX: 204,
+							 offsetY: 208,
+							 minX: 0,
+							 minY: 0,
+							 attached: false
+			};
+
+			var sombra = {
+				name: "sombra",
 				color: "#666666",
 				completed: false,
+				vertex: [[268.6666669845581,80],[342.6666669845581,80],[268.6666669845581,154],[242.6666669845581,152],[244.6666669845581,186],[390.6666669845581,332],[390.6666669845581,482],[286.6666669845581,480],[234.6666669845581,430],[286.6666669845581,378],[242.6666669845581,332],[192.6666669845581,280],[242.6666669845581,228],[170.6666669845581,228],[166.6666669845581,150],[194.6666669845581,150]],
 				offsetX: 0,
-				offsetY: 0,
-				vertex: [[701,2],[594,109],[489,2],[489,215],[442,171],[291,171],[74,385],[74,688],[376,688],[288,599],[289,472],[441,321],[595,322],[702,215]]
-				}
-			   ,
-			   "dificuldade":100,
-			   "tempo":100,
-			   "poligonos":[
-				  {
-					 "color":"#eae500",
-					connected: false,
-					offsetX: 594,
-					offsetY: 2,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[701,2],[594,109],[701,216]]
-				  },
-				  {
-					 "color":"#0040e5",
-					connected: false,
-					offsetX: 489,
-					offsetY: 2,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[489,2],[594,109],[489,216]]
-				  },
-				  {
-					 "color":"#00e5a5",
-					connected: false,
-					offsetX: 489,
-					offsetY: 109,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[594,109],[489,216], [595, 322], [701,216]]
-				  },
-				   {
-					 "color":"#e500ce",
-					connected: false,
-					offsetX: 291,
-					offsetY: 171,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[595, 322], [442,322], [291, 171], [442, 171]]
-				  },
-				  {
-					 "color":"#009a00",
-					connected: false,
-					offsetX: 291,
-					offsetY: 171,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[291, 171], [442,322], [289, 472]]
-				  },
-				  {
-					 "color":"#ea6f00",
-					connected: false,
-					offsetX: 74,
-					offsetY: 169,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[289, 169], [74,385], [289, 599]]
-				  },
-				  {
-					"color":"#68bce7",
-					connected: false,
-					offsetX: 74,
-					offsetY: 385,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[74,385], [74, 688], [376, 688]]
-				  }
-			   ]
-			};
-			
-			//////////////////////// FIM GATO ////////////////////////
-			
-			//////////////////////// VASO ////////////////////////
-			
-			var vaso = {
-			   "nome":"vaso",
-			   "sombra": {
-				color: "#666666",
-				completed: false,
-				offsetX: 0,
-				offsetY: 0,
-				vertex: [[342,146],[532,337],[343,528],[613,528],[343,799],[74,528], [343,528], [152,337]]
-				}
-			   ,
-			   "dificuldade":100,
-			   "tempo":100,
-			   "poligonos":[
-				  {
-					 "color":"#00e5a5",
-					connected: false,
-					offsetX: 247,
-					offsetY: 146,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[342,146],[438,242],[342, 337], [247, 242]]
-				  },
-				  {
-					 "color":"#eae500",
-					connected: false,
-					offsetX: 342,
-					offsetY: 242,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[438,242],[342, 337], [532, 337]]
-				  },
-				  {
-					"color":"#009a00",
-					connected: false,
-					offsetX: 342,
-					offsetY: 337,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[342, 337], [532, 337], [342, 528]]
-				  },
-				  {
-					"color":"#e500ce",
-					connected: false,
-					offsetX: 247,
-					offsetY: 242,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[247, 242],[342, 337], [343, 528], [247, 432]]
-				  },
-				  {
-					"color":"#0040e5",
-					connected: false,
-					offsetX: 152,
-					offsetY: 242,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[247, 242], [247, 432], [152, 337]]
-				  },
-				  {
-					"color":"#68bce7",
-					connected: false,
-					offsetX: 343,
-					offsetY: 528,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[343, 528], [613, 529], [343, 799]]
-				  },
-				  {
-					"color":"#ea6f00",
-					connected: false,
-					offsetX: 74,
-					offsetY: 528,
-					minX: 0,
-					minY: 0,
-					attached: false,					
-					 "vertex":[[343, 528],[343, 799], [74, 529]]
-				  }
-			   ]
-			};
-			
-			//////////////////////// EXERCICIOS //////////////////////// 
+				offsetY: 0
+			}
 
-			var sombra = vaso.sombra;
-
-			var poligonos = vaso.poligonos;
+			var poligonos = [{"color":"rgb(55, 255, 66)","vertex":[[268.6666669845581,80],[194.6666669845581,150],[268.6666669845581,154],[342.6666669845581,80]]},{"color":"rgb(255, 86, 212)","vertex":[[242.6666669845581,152],[242.6666669845581,228],[170.6666669845581,228],[166.6666669845581,150]]},{"color":"rgb(132, 248, 255)","vertex":[[244.6666669845581,186],[242.6666669845581,332],[390.6666669845581,332]]},{"color":"rgb(78, 54, 82)","vertex":[[242.6666669845581,228],[192.6666669845581,280],[242.6666669845581,332]]},{"color":"rgb(82, 36, 80)","vertex":[[390.6666669845581,482],[286.6666669845581,480],[286.6666669845581,378]]},{"color":"rgb(139, 108, 49)","vertex":[[286.6666669845581,378],[234.6666669845581,430],[286.6666669845581,480]]},{"color":"rgb(139, 108, 49)","vertex":[[268.6666669845581,154],[194.6666669845581,150],[268.6666669845581,80]]}]
 
 			function setSize(canvas) {
 				canvas.width = window.innerWidth - 8,
@@ -416,11 +287,13 @@
 
 
 			function getMousePos(canvas, evt) {
+				console.log(evt);
 				var rect = canvas.getBoundingClientRect();
 				return {
-					x: evt.clientX - rect.left,
-					y: evt.clientY - rect.top
+					x: evt.changedTouches[0].clientX - rect.left,
+					y: evt.changedTouches[0].clientY - rect.top
 				};
+
 			}
 
 			function findSelectedPolygon(mousepos) {
@@ -671,7 +544,8 @@
 				window.canvas = canvas;
 				window.context = context;
 
-				canvas.addEventListener('mousedown', function(evt) {
+				canvas.addEventListener('touchstart', function(evt) {
+					console.log("START");
 					var mousePos    = getMousePos(canvas, evt);
 					var currentSelectedPolygon = findSelectedPolygon(mousePos);
 					if (currentSelectedPolygon !== null) {
@@ -695,14 +569,16 @@
 					}
 				}, false);
 
-				canvas.addEventListener('mouseup', function(evt) {
+				canvas.addEventListener('touchend', function(evt) {
+					console.log("END");
 					var mousePos    = getMousePos(canvas, evt);
 					startDrag       = false;
 					selectedPolygon = null;
 				}, false);
 
-				canvas.addEventListener('mousemove', function(evt) {
+				canvas.addEventListener('touchmove', function(evt) {
 					// adiciona o mouse event para um objeto na window, pois o main loop necessita saber da posição atual do mouse
+					console.log("MOVE");
 					window.mouseEventObject = evt;
 					dragSelectedPolygon(getMousePos(canvas, evt));
 					
