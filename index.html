@@ -226,11 +226,103 @@
 			   ]
 			};
 			
+			//////////////////////// FIM VASO ////////////////////////
+			
+			//////////////////////// BALEIA ////////////////////////
+				var baleia = {
+			   "nome":"baleia",
+			   "sombra": {
+				color: "#666666",
+				completed: false,
+				offsetX: 0,
+				offsetY: 0,
+				vertex: [[40,0],[40,193],[0,232],[0,369],[193,561],[576,560],[519,504],[655,368],[383,368],[272,370],[136,234],[273,96],[137,96]]
+				}
+			   ,
+			   "dificuldade":100,
+			   "tempo":100,
+			   "poligonos":[
+				  {
+					"color":"#0040e5",
+					connected: false,
+					offsetX: 40,
+					offsetY: 0,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[40, 0],[137,96],[40,193]]
+				  },
+				  {
+					"color":"#e500ce",
+					connected: false,
+					offsetX: 0,
+					offsetY: 96,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[137,96],[273, 96], [136, 234], [0, 232]]
+				  },
+				  
+				  {
+					"color":"#00e5a5",
+					connected: false,
+					offsetX: 0,
+					offsetY: 232,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[0, 232], [0, 369], [136, 369], [136, 234]]
+				  },
+				  {
+					"color":"#eae500",
+					connected: false,
+					offsetX: 136,
+					offsetY: 234,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[136, 234], [272,370], [136, 369]]
+				  },
+				  {
+					"color":"#ea6f00",
+					connected: false,
+					offsetX: 0,
+					offsetY: 368,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[383, 368], [0,369], [193, 561]]
+				  },
+				  {
+					"color":"#68bce7",
+					connected: false,
+					offsetX: 193,
+					offsetY: 368,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[383, 368],[193, 561], [576, 560]]
+				  },
+				  {
+					"color":"#009a00",
+					connected: false,
+					offsetX: 193,
+					offsetY: 368,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[519, 504],[655, 368], [383, 368]]
+				  }
+			   ]
+			};
+			//////////////////////// FIM BALEIA ////////////////////////
+
+			
 			//////////////////////// EXERCICIOS //////////////////////// 
 
-			var sombra = vaso.sombra;
+			var sombra = baleia.sombra;
 
-			var poligonos = vaso.poligonos;
+			var poligonos = baleia.poligonos;
 
 			function setSize(canvas) {
 				canvas.width = window.innerWidth - 8,
