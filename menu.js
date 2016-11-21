@@ -3,13 +3,16 @@ var app = angular.module('menuApp', []);
 app.controller('menuCtrl', function($scope, $http) {
     $scope.equipes = [];
     $scope.jogos = [];
+	$scope.jogando = {};
 
     $scope.inicializar = function () {
+		setEscopo($scope);
+		
         $scope.$watch(
             "equipes",
             function (newValue, oldValue, scope) {
                 scope.atualizar();
-                //POST /equipes
+				//$http.post("/equipes", scope.equipes);
             },
             true
         );
@@ -17,15 +20,12 @@ app.controller('menuCtrl', function($scope, $http) {
         $scope.$watch(
             "jogos",
             function (newValue, oldValue, scope) {
-                //POST /jogos  
+                //$http.post("/jogos", scope.jogos);
             },
             true
         );
-
-        //GET $scope.jogos
-        //GET $scope.equipes        
-
-        $scope.equipes = [ { "id": 1, "nome": "Equipe A", "jogando": true, "total": 0, "exercicios": [ { "nome": "cavalo", "pontos": 10 }, { "nome": "rola", "pontos": 15 } ] }
+		
+		$scope.equipes = [ { "id": 1, "nome": "Equipe A", "jogando": true, "total": 0, "exercicios": [ { "nome": "cavalo", "pontos": 10 }, { "nome": "rola", "pontos": 15 } ] }
                          , { "id": 2, "nome": "Equipe B", "jogando": true, "total": 0, "exercicios": [] }
                          , { "id": 3, "nome": "Equipe C", "jogando": true, "total": 0, "exercicios": [] }
                          , { "id": 4, "nome": "Equipe D", "jogando": true, "total": 0, "exercicios": [] } ];
@@ -62,7 +62,8 @@ app.controller('menuCtrl', function($scope, $http) {
     };
 
     $scope.jogar = function (jogo, equipe) {
-        //GET index.html?nome=jogo.nome&equipe=equipe
+		$scope.jogando = { "jogo": jogo.nome, "equipe": equipe.id };
+		restart(jogo.sombra, jogo.poligonos, $scope);
     };
 
     $scope.pontos = function (equipe, jogo) {

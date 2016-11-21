@@ -11,8 +11,14 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
         <script src="menu.js"></script>
     </head>
-    <body class="w3-container w3-padding-0 w3-theme-dark">
-        <header class="w3-theme-light">
+    <body>
+        
+		
+<div id="id01" class="w3-modal">
+    <div class="w3-modal-content">
+      <div class="w3-container w3-padding-0 w3-theme-dark ">
+        <span onclick="document.getElementById('id01').style.display='none'" class="w3-closebtn">&times;</span>
+<header class="w3-theme-light">
             <h1 class="w3-center w3-text-theme w3-margin-0 w3-padding-16">MENU</h1>
         </header>       
         <div ng-app="menuApp" ng-controller="menuCtrl" class="w3-container w3-padding-0 w3-margin-top">
@@ -39,7 +45,7 @@
                     <tr>
                         <th>Nome</th>
                         <th ng-repeat="e in equipes" ng-show="e.jogando">{{e.nome}}</th>
-                        <th>Excluir</th>
+                        <!--<th>Excluir</th>-->
                     </tr>
                     <tr ng-repeat="x in jogos" >
                         <td>
@@ -48,12 +54,2200 @@
                         <td ng-repeat="e in equipes" ng-show="e.jogando">
                             <div class="w3-btn w3-theme" ng-click="jogar(x, e.id)">Jogar ({{pontos(e, x)}})</div>
                         </td>
-                        <td>
+                        <!--<td>
                             <div class="w3-btn w3-theme" ng-click="excluir(x)">&times;</div>
-                        </td>                        
+                        </td>-->                        
                     </tr>
                 </table>
             </div>
         </div>
+		
+      </div>
+    </div>
+  </div>
+		
+		<img id="background" width="0" height="0" src="background.jpg" style="visibility: hidden; float: right;">
+		<canvas id="myCanvas"></canvas>
+		<script>
+
+			///
+			///
+			/// Main Loop
+			///
+			///
+			var escopo;
+			var ONE_FRAME_TIME = 1000 / 30;
+			var mainloop = function() {
+				var evt = window.mouseEventObject;
+				update();
+				draw(canvas, evt);
+		    };
+			
+			function setEscopo(escopo) {
+				escopo = escopo;
+			};
+
+			var MAX_TIME = 2000;
+			var selectedPolygon = null;
+			var startDrag       = false;
+			var onClickOffsetCursorX = 0;
+			var onClickOffsetCursorY = 0;
+			var time  = 2000;
+			var win = null;
+			
+			var restartButton = {x: 10,
+								 y: -20,
+								 w: 100,
+								 h: 60,
+								 text: "Menu",
+								 color: "#eae500",
+								 firstColor: "#e500ce",
+								 secondColor: "#666666",
+							     onclick: function() {
+										document.getElementById('id01').style.display='block';
+										restart(sombra, poligonos);
+									}	
+								 }
+			
+			//////////////////////// EXERCICIOS ////////////////////////
+
+			//////////////////////// CAVALO ////////////////////////
+			var cavalo = {  
+			   "nome":"cavalo",
+			   "sombra":{  
+				  "color":"#666666",
+				  "completed":false,
+				  "offsetX":0,
+				  "offsetY":0,
+				  "vertex":[  
+					 [  
+						245,
+						178
+					 ],
+					 [  
+						292,
+						131
+					 ],
+					 [  
+						338,
+						178
+					 ],
+					 [  
+						313,
+						204
+					 ],
+					 [  
+						313,
+						295
+					 ],
+					 [  
+						344,
+						295
+					 ],
+					 [  
+						343,
+						315
+					 ],
+					 [  
+						418,
+						257
+					 ],
+					 [  
+						483,
+						267
+					 ],
+					 [  
+						407,
+						324
+					 ],
+					 [  
+						343,
+						315
+					 ],
+					 [  
+						343,
+						429
+					 ],
+					 [  
+						277,
+						363
+					 ],
+					 [  
+						228,
+						363
+					 ],
+					 [  
+						161,
+						430
+					 ],
+					 [  
+						160,
+						362
+					 ],
+					 [  
+						145,
+						362
+					 ],
+					 [  
+						144,
+						296
+					 ],
+					 [  
+						78,
+						296
+					 ],
+					 [  
+						146,
+						230
+					 ],
+					 [  
+						210,
+						296
+					 ],
+					 [  
+						220,
+						297
+					 ],
+					 [  
+						292,
+						225
+					 ],
+					 [  
+						245,
+						178
+					 ]
+				  ]
+			   },
+			   "dificuldade":999,
+			   "tempo":9999,
+			   "poligonos":[  
+				  {  
+					 "color":"rgb(0, 255, 31)",
+					 "connected":false,
+					 "offsetX":245,
+					 "offsetY":131,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   245,
+						   178
+						],
+						[  
+						   292,
+						   131
+						],
+						[  
+						   338,
+						   178
+						],
+						[  
+						   292,
+						   225
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 120, 252)",
+					 "connected":false,
+					 "offsetX":220,
+					 "offsetY":204,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   220,
+						   297
+						],
+						[  
+						   313,
+						   204
+						],
+						[  
+						   313,
+						   295
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(41, 186, 255)",
+					 "connected":false,
+					 "offsetX":210,
+					 "offsetY":295,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   210,
+						   296
+						],
+						[  
+						   344,
+						   295
+						],
+						[  
+						   343,
+						   429
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(226, 255, 15)",
+					 "connected":false,
+					 "offsetX":343,
+					 "offsetY":257,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   343,
+						   315
+						],
+						[  
+						   418,
+						   257
+						],
+						[  
+						   483,
+						   267
+						],
+						[  
+						   407,
+						   324
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 36, 36)",
+					 "connected":false,
+					 "offsetX":78,
+					 "offsetY":230,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   78,
+						   296
+						],
+						[  
+						   146,
+						   230
+						],
+						[  
+						   144,
+						   296
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 159, 0)",
+					 "connected":false,
+					 "offsetX":145,
+					 "offsetY":230,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   146,
+						   230
+						],
+						[  
+						   145,
+						   362
+						],
+						[  
+						   277,
+						   363
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 54, 224)",
+					 "connected":false,
+					 "offsetX":160,
+					 "offsetY":362,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   161,
+						   430
+						],
+						[  
+						   228,
+						   363
+						],
+						[  
+						   160,
+						   362
+						]
+					 ]
+				  }
+			   ]
+			}
+			//////////////////////// FIM CAVALO ////////////////////////
+			
+			//////////////////////// ROLA ////////////////////////
+			rola = {
+			   "nome":"rola",
+			   "sombra":{  
+				  "color":"#666666",
+				  "completed":false,
+				  "offsetX":0,
+				  "offsetY":0,
+				  "vertex":[  
+					 [  
+						80,
+						168
+					 ],
+					 [  
+						133,
+						115
+					 ],
+					 [  
+						184,
+						167
+					 ],
+					 [  
+						184,
+						242
+					 ],
+					 [  
+						258,
+						243
+					 ],
+					 [  
+						334,
+						243
+					 ],
+					 [  
+						408,
+						168
+					 ],
+					 [  
+						483,
+						168
+					 ],
+					 [  
+						408,
+						242
+					 ],
+					 [  
+						311,
+						340
+					 ],
+					 [  
+						310,
+						445
+					 ],
+					 [  
+						205,
+						446
+					 ],
+					 [  
+						259,
+						391
+					 ],
+					 [  
+						154,
+						392
+					 ],
+					 [  
+						205,
+						339
+					 ],
+					 [  
+						110,
+						243
+					 ],
+					 [  
+						110,
+						169
+					 ],
+					 [  
+						80,
+						168
+					 ]
+				  ]
+			   },
+			   "dificuldade":999,
+			   "tempo":9999,
+			   "poligonos":[  
+				  {  
+					 "color":"rgb(178, 82, 255)",
+					 "connected":false,
+					 "offsetX":80,
+					 "offsetY":115,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   80,
+						   168
+						],
+						[  
+						   133,
+						   115
+						],
+						[  
+						   184,
+						   167
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(89, 255, 110)",
+					 "connected":false,
+					 "offsetX":110,
+					 "offsetY":167,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   110,
+						   169
+						],
+						[  
+						   110,
+						   243
+						],
+						[  
+						   184,
+						   242
+						],
+						[  
+						   184,
+						   242
+						],
+						[  
+						   184,
+						   167
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(10, 201, 255)",
+					 "connected":false,
+					 "offsetX":110,
+					 "offsetY":243,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   110,
+						   243
+						],
+						[  
+						   258,
+						   243
+						],
+						[  
+						   259,
+						   391
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 0, 0)",
+					 "connected":false,
+					 "offsetX":154,
+					 "offsetY":339,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   154,
+						   392
+						],
+						[  
+						   205,
+						   339
+						],
+						[  
+						   259,
+						   391
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 127, 5)",
+					 "connected":false,
+					 "offsetX":258,
+					 "offsetY":242,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   259,
+						   391
+						],
+						[  
+						   408,
+						   242
+						],
+						[  
+						   258,
+						   243
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(241, 255, 0)",
+					 "connected":false,
+					 "offsetX":334,
+					 "offsetY":168,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   334,
+						   243
+						],
+						[  
+						   408,
+						   168
+						],
+						[  
+						   483,
+						   168
+						],
+						[  
+						   408,
+						   242
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 148, 224)",
+					 "connected":false,
+					 "offsetX":205,
+					 "offsetY":340,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   205,
+						   446
+						],
+						[  
+						   311,
+						   340
+						],
+						[  
+						   310,
+						   445
+						]
+					 ]
+				  }
+			   ]
+			}
+			//////////////////////// FIM ROLA ////////////////////////
+			
+			//////////////////////// BARCO ////////////////////////
+			var barco = {  
+			   "nome":"barco",
+			   "sombra":{  
+				  "color":"#666666",
+				  "completed":false,
+				  "offsetX":0,
+				  "offsetY":0,
+				  "vertex":[  
+					 [  
+						217,
+						279
+					 ],
+					 [  
+						275,
+						80
+					 ],
+					 [  
+						346,
+						210
+					 ],
+					 [  
+						287,
+						406
+					 ],
+					 [  
+						318,
+						407
+					 ],
+					 [  
+						390,
+						408
+					 ],
+					 [  
+						465,
+						408
+					 ],
+					 [  
+						391,
+						481
+					 ],
+					 [  
+						317,
+						481
+					 ],
+					 [  
+						245,
+						481
+					 ],
+					 [  
+						172,
+						481
+					 ],
+					 [  
+						99,
+						408
+					 ],
+					 [  
+						243,
+						408
+					 ],
+					 [  
+						287,
+						407
+					 ],
+					 [  
+						217,
+						279
+					 ]
+				  ]
+			   },
+			   "dificuldade":999,
+			   "tempo":9999,
+			   "poligonos":[  
+				  {  
+					 "color":"rgb(102, 204, 255)",
+					 "connected":false,
+					 "offsetX":217,
+					 "offsetY":80,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   217,
+						   279
+						],
+						[  
+						   346,
+						   210
+						],
+						[  
+						   275,
+						   80
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 162, 61)",
+					 "connected":false,
+					 "offsetX":217,
+					 "offsetY":210,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   217,
+						   279
+						],
+						[  
+						   346,
+						   210
+						],
+						[  
+						   287,
+						   406
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 112, 247)",
+					 "connected":false,
+					 "offsetX":99,
+					 "offsetY":408,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   172,
+						   481
+						],
+						[  
+						   243,
+						   408
+						],
+						[  
+						   99,
+						   408
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(234, 255, 23)",
+					 "connected":false,
+					 "offsetX":172,
+					 "offsetY":407,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   172,
+						   481
+						],
+						[  
+						   245,
+						   481
+						],
+						[  
+						   318,
+						   407
+						],
+						[  
+						   243,
+						   408
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(187, 59, 255)",
+					 "connected":false,
+					 "offsetX":245,
+					 "offsetY":407,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   245,
+						   481
+						],
+						[  
+						   317,
+						   481
+						],
+						[  
+						   318,
+						   407
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(3, 255, 0)",
+					 "connected":false,
+					 "offsetX":317,
+					 "offsetY":407,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   317,
+						   481
+						],
+						[  
+						   318,
+						   407
+						],
+						[  
+						   390,
+						   408
+						],
+						[  
+						   391,
+						   481
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 0, 0)",
+					 "connected":false,
+					 "offsetX":390,
+					 "offsetY":408,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   390,
+						   408
+						],
+						[  
+						   390,
+						   408
+						],
+						[  
+						   465,
+						   408
+						],
+						[  
+						   391,
+						   481
+						]
+					 ]
+				  }
+			   ]
+			}
+			//////////////////////// FIM BARCO ////////////////////////
+			
+			//////////////////////// PINHEIRO ////////////////////////
+			var pinheiro = {  
+			   "nome":"pinheiro",
+			   "sombra":{  
+				  "color":"#666666",
+				  "completed":false,
+				  "offsetX":0,
+				  "offsetY":0,
+				  "vertex":[  
+					 [  
+						281,
+						80
+					 ],
+					 [  
+						382,
+						180
+					 ],
+					 [  
+						482,
+						281
+					 ],
+					 [  
+						381,
+						281
+					 ],
+					 [  
+						481,
+						381
+					 ],
+					 [  
+						332,
+						381
+					 ],
+					 [  
+						332,
+						481
+					 ],
+					 [  
+						230,
+						481
+					 ],
+					 [  
+						230,
+						381
+					 ],
+					 [  
+						282,
+						381
+					 ],
+					 [  
+						82,
+						381
+					 ],
+					 [  
+						179,
+						280
+					 ],
+					 [  
+						82,
+						280
+					 ],
+					 [  
+						181,
+						179
+					 ],
+					 [  
+						282,
+						179
+					 ],
+					 [  
+						181,
+						179
+					 ],
+					 [  
+						281,
+						80
+					 ]
+				  ]
+			   },
+			   "dificuldade":999,
+			   "tempo":9999,
+			   "poligonos":[  
+				  {  
+					 "color":"rgb(255, 107, 252)",
+					 "connected":false,
+					 "offsetX":181,
+					 "offsetY":80,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   281,
+						   80
+						],
+						[  
+						   382,
+						   180
+						],
+						[  
+						   181,
+						   179
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(137, 255, 122)",
+					 "connected":false,
+					 "offsetX":282,
+					 "offsetY":179,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   282,
+						   179
+						],
+						[  
+						   382,
+						   180
+						],
+						[  
+						   381,
+						   281
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(150, 235, 255)",
+					 "connected":false,
+					 "offsetX":381,
+					 "offsetY":180,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   382,
+						   180
+						],
+						[  
+						   381,
+						   281
+						],
+						[  
+						   482,
+						   281
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 51, 51)",
+					 "connected":false,
+					 "offsetX":82,
+					 "offsetY":179,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   282,
+						   179
+						],
+						[  
+						   179,
+						   280
+						],
+						[  
+						   82,
+						   280
+						],
+						[  
+						   181,
+						   179
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(71, 196, 255)",
+					 "connected":false,
+					 "offsetX":282,
+					 "offsetY":179,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   282,
+						   381
+						],
+						[  
+						   282,
+						   179
+						],
+						[  
+						   481,
+						   381
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 195, 61)",
+					 "connected":false,
+					 "offsetX":82,
+					 "offsetY":179,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   282,
+						   381
+						],
+						[  
+						   282,
+						   179
+						],
+						[  
+						   82,
+						   381
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(20, 255, 88)",
+					 "connected":false,
+					 "offsetX":230,
+					 "offsetY":381,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   230,
+						   481
+						],
+						[  
+						   332,
+						   481
+						],
+						[  
+						   332,
+						   381
+						],
+						[  
+						   230,
+						   381
+						]
+					 ]
+				  }
+			   ]
+			}
+			//////////////////////// FIM PINHEIRO ////////////////////////
+			
+			//////////////////////// COELHO ////////////////////////
+			var coelho = {  
+			   "nome":"coelho",
+			   "sombra":{  
+				  "color":"#666666",
+				  "completed":false,
+				  "offsetX":0,
+				  "offsetY":0,
+				  "vertex":[  
+					 [  
+						269,
+						80
+					 ],
+					 [  
+						344,
+						80
+					 ],
+					 [  
+						270,
+						154
+					 ],
+					 [  
+						244,
+						154
+					 ],
+					 [  
+						244,
+						187
+					 ],
+					 [  
+						392,
+						334
+					 ],
+					 [  
+						393,
+						482
+					 ],
+					 [  
+						287,
+						482
+					 ],
+					 [  
+						235,
+						430
+					 ],
+					 [  
+						287,
+						377
+					 ],
+					 [  
+						244,
+						335
+					 ],
+					 [  
+						192,
+						282
+					 ],
+					 [  
+						245,
+						228
+					 ],
+					 [  
+						170,
+						228
+					 ],
+					 [  
+						172,
+						153
+					 ],
+					 [  
+						196,
+						153
+					 ],
+					 [  
+						269,
+						80
+					 ]
+				  ]
+			   },
+			   "dificuldade":999,
+			   "tempo":9999,
+			   "poligonos":[  
+				  {  
+					 "color":"rgb(255, 252, 25)",
+					 "connected":false,
+					 "offsetX":196,
+					 "offsetY":80,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   269,
+						   80
+						],
+						[  
+						   344,
+						   80
+						],
+						[  
+						   270,
+						   154
+						],
+						[  
+						   196,
+						   153
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(33, 255, 46)",
+					 "connected":false,
+					 "offsetX":170,
+					 "offsetY":153,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   172,
+						   153
+						],
+						[  
+						   244,
+						   154
+						],
+						[  
+						   245,
+						   228
+						],
+						[  
+						   170,
+						   228
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 130, 25)",
+					 "connected":false,
+					 "offsetX":244,
+					 "offsetY":187,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   244,
+						   187
+						],
+						[  
+						   244,
+						   335
+						],
+						[  
+						   392,
+						   334
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(228, 105, 255)",
+					 "connected":false,
+					 "offsetX":192,
+					 "offsetY":228,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   245,
+						   228
+						],
+						[  
+						   192,
+						   282
+						],
+						[  
+						   244,
+						   335
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(79, 169, 255)",
+					 "connected":false,
+					 "offsetX":244,
+					 "offsetY":334,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   244,
+						   335
+						],
+						[  
+						   392,
+						   334
+						],
+						[  
+						   393,
+						   482
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(255, 0, 0)",
+					 "connected":false,
+					 "offsetX":235,
+					 "offsetY":377,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   287,
+						   377
+						],
+						[  
+						   235,
+						   430
+						],
+						[  
+						   287,
+						   482
+						]
+					 ]
+				  },
+				  {  
+					 "color":"rgb(231, 158, 255)",
+					 "connected":false,
+					 "offsetX":287,
+					 "offsetY":377,
+					 "minY":0,
+					 "minX":0,
+					 "attached":false,
+					 "vertex":[  
+						[  
+						   287,
+						   377
+						],
+						[  
+						   287,
+						   482
+						],
+						[  
+						   393,
+						   482
+						]
+					 ]
+				  }
+			   ]
+			}
+			//////////////////////// FIM COELHO ////////////////////////
+			
+			//////////////////////// GATO //////////////////////// 
+			var gato = {
+			   "nome":"gato",
+			   "sombra": {
+				color: "#666666",
+				completed: false,
+				offsetX: 0,
+				offsetY: 0,
+				vertex: [[701,2],[594,109],[489,2],[489,215],[442,171],[291,171],[74,385],[74,688],[376,688],[288,599],[289,472],[441,321],[595,322],[702,215]]
+				}
+			   ,
+			   "dificuldade":100,
+			   "tempo":100,
+			   "poligonos":[
+				  {
+					 "color":"#eae500",
+					connected: false,
+					offsetX: 594,
+					offsetY: 2,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[701,2],[594,109],[701,216]]
+				  },
+				  {
+					 "color":"#0040e5",
+					connected: false,
+					offsetX: 489,
+					offsetY: 2,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[489,2],[594,109],[489,216]]
+				  },
+				  {
+					 "color":"#00e5a5",
+					connected: false,
+					offsetX: 489,
+					offsetY: 109,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[594,109],[489,216], [595, 322], [701,216]]
+				  },
+				   {
+					 "color":"#e500ce",
+					connected: false,
+					offsetX: 291,
+					offsetY: 171,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[595, 322], [442,322], [291, 171], [442, 171]]
+				  },
+				  {
+					 "color":"#009a00",
+					connected: false,
+					offsetX: 291,
+					offsetY: 171,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[291, 171], [442,322], [289, 472]]
+				  },
+				  {
+					 "color":"#ea6f00",
+					connected: false,
+					offsetX: 74,
+					offsetY: 169,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[289, 169], [74,385], [289, 599]]
+				  },
+				  {
+					"color":"#68bce7",
+					connected: false,
+					offsetX: 74,
+					offsetY: 385,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[74,385], [74, 688], [376, 688]]
+				  }
+			   ]
+			};
+			
+			//////////////////////// FIM GATO ////////////////////////
+			
+			//////////////////////// VASO ////////////////////////
+			
+			var vaso = {
+			   "nome":"vaso",
+			   "sombra": {
+				color: "#666666",
+				completed: false,
+				offsetX: 0,
+				offsetY: 0,
+				vertex: [[342,146],[532,337],[343,528],[613,528],[343,799],[74,528], [343,528], [152,337]]
+				}
+			   ,
+			   "dificuldade":100,
+			   "tempo":100,
+			   "poligonos":[
+				  {
+					 "color":"#00e5a5",
+					connected: false,
+					offsetX: 247,
+					offsetY: 146,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[342,146],[438,242],[342, 337], [247, 242]]
+				  },
+				  {
+					 "color":"#eae500",
+					connected: false,
+					offsetX: 342,
+					offsetY: 242,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[438,242],[342, 337], [532, 337]]
+				  },
+				  {
+					"color":"#009a00",
+					connected: false,
+					offsetX: 342,
+					offsetY: 337,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[342, 337], [532, 337], [342, 528]]
+				  },
+				  {
+					"color":"#e500ce",
+					connected: false,
+					offsetX: 247,
+					offsetY: 242,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[247, 242],[342, 337], [343, 528], [247, 432]]
+				  },
+				  {
+					"color":"#0040e5",
+					connected: false,
+					offsetX: 152,
+					offsetY: 242,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[247, 242], [247, 432], [152, 337]]
+				  },
+				  {
+					"color":"#68bce7",
+					connected: false,
+					offsetX: 343,
+					offsetY: 528,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[343, 528], [613, 529], [343, 799]]
+				  },
+				  {
+					"color":"#ea6f00",
+					connected: false,
+					offsetX: 74,
+					offsetY: 528,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[343, 528],[343, 799], [74, 529]]
+				  }
+			   ]
+			};
+			
+			//////////////////////// FIM VASO ////////////////////////
+			
+			//////////////////////// BALEIA ////////////////////////
+				var baleia = {
+			   "nome":"baleia",
+			   "sombra": {
+				color: "#666666",
+				completed: false,
+				offsetX: 0,
+				offsetY: 0,
+				vertex: [[40,0],[40,193],[0,232],[0,369],[193,561],[576,560],[519,504],[655,368],[383,368],[272,370],[136,234],[273,96],[137,96]]
+				}
+			   ,
+			   "dificuldade":100,
+			   "tempo":100,
+			   "poligonos":[
+				  {
+					"color":"#0040e5",
+					connected: false,
+					offsetX: 40,
+					offsetY: 0,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[40, 0],[137,96],[40,193]]
+				  },
+				  {
+					"color":"#e500ce",
+					connected: false,
+					offsetX: 0,
+					offsetY: 96,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[137,96],[273, 96], [136, 234], [0, 232]]
+				  },
+				  
+				  {
+					"color":"#00e5a5",
+					connected: false,
+					offsetX: 0,
+					offsetY: 232,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[0, 232], [0, 369], [136, 369], [136, 234]]
+				  },
+				  {
+					"color":"#eae500",
+					connected: false,
+					offsetX: 136,
+					offsetY: 234,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[136, 234], [272,370], [136, 369]]
+				  },
+				  {
+					"color":"#ea6f00",
+					connected: false,
+					offsetX: 0,
+					offsetY: 368,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[383, 368], [0,369], [193, 561]]
+				  },
+				  {
+					"color":"#68bce7",
+					connected: false,
+					offsetX: 193,
+					offsetY: 368,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[383, 368],[193, 561], [576, 560]]
+				  },
+				  {
+					"color":"#009a00",
+					connected: false,
+					offsetX: 193,
+					offsetY: 368,
+					minX: 0,
+					minY: 0,
+					attached: false,					
+					 "vertex":[[519, 504],[655, 368], [383, 368]]
+				  }
+			   ]
+			};
+			//////////////////////// FIM BALEIA ////////////////////////
+
+			
+			//////////////////////// EXERCICIOS //////////////////////// 
+
+
+			var sombra = baleia.sombra;
+
+			var poligonos = baleia.poligonos;
+			
+			function restart(sombraSelecionada, poligonosSelecionados, scope) {
+				escopo    = scope;
+				sombra    = sombraSelecionada;
+				poligonos = poligonosSelecionados;
+				
+				selectedPolygon = null;
+				startDrag       = false;
+				onClickOffsetCursorX = 0;
+				onClickOffsetCursorY = 0;
+				time  = 2000;
+				win = null;
+				
+				centralizeSombra();
+				polygonsGameStartPosition()
+			}
+			
+		    function initRestartButton(context) {	
+				context.font = '40pt Sigmar One';			
+				var textSize = context.measureText(restartButton.text);
+				restartButton.w = textSize.width + 100;
+				restartButton.h = restartButton.h;
+				restartButton.x = window.canvas.width - textSize.width - 120;
+				restartButton.y = restartButton.y;
+			}
+
+			function setSize(canvas) {
+				canvas.width = window.innerWidth - 8,
+				canvas.height = window.innerHeight - 8;
+			}
+
+			function writeMessage(context, message, color) {
+				context.font = '24pt Sigmar One';
+				context.fillStyle = color;
+				context.fillText(message, 10, 25);
+			}
+
+			function update() {
+				var allAttached = true;
+				poligonos.forEach(function(p) {
+					if (p.attached == false) {
+						allAttached = false;
+					}
+				});
+
+				if (allAttached) {
+					win = true;
+					
+					escopo.equipes.forEach(function (e) {
+						if (e.id === escopo.jogando.equipe) {
+							var l = false;
+
+							e.exercicios.forEach(function (x) {
+								if (x.nome === escopo.jogando.jogo) {
+									x.pontos = time;
+									l = true;
+								}
+							});
+							
+							if (!l) {
+								e.exercicios.push({ "nome": escopo.jogando.jogo, "pontos": time });
+							}
+						}
+					});
+				}
+			}
+
+			function draw(canvas, evt) {
+				var context = canvas.getContext('2d');
+				context.clearRect(0, 0, canvas.width, canvas.height);
+
+				drawBackground(context);
+
+				// as vezes o evt está undefined =(
+				//if (evt !== undefined) {
+				//	drawMessageCursorPosition(canvas, context, evt);
+				//}
+
+				//drawBboxSombra(context);
+				
+				drawRestartButton(context);
+				
+				drawSombra(context);
+
+				//drawBboxPolygons(context);
+				drawPolygons(context);
+
+				drawTime(context);
+
+				drawSelectedPolygonOnTop(context);
+
+				if (win !== null) {
+					if (win) {
+						console.log("Ganhou");
+						drawWinOrLoseMessage(context, "Ganhou", "#009900");
+					} else {
+						console.log("Perdeu");
+						drawWinOrLoseMessage(context, "Perdeu", "#ff3333");
+					}
+				}
+
+			}
+			
+			function drawRestartButton(context) {
+				context.font = '40pt Sigmar One';	
+				context.textBaseline = 'top';
+				context.fillStyle = restartButton.color;
+				context.fillText(restartButton.text, restartButton.x, restartButton.y);
+				restartButton.color = restartButton.firstColor;
+			}
+
+			function drawWinOrLoseMessage(context, message, color) {
+				var centerX = window.canvas.width / 2;
+				context.textBaseline = 'top';
+				context.font = '72pt Sigmar One';
+				context.fillStyle = color;
+
+				var textCenter = context.measureText(message).width / 2;
+				console.log( centerX-textCenter);
+				context.fillText(message, centerX-textCenter, 0);
+			} 
+
+			function drawBackground(context) {
+				var img = document.getElementById("background");
+    			context.drawImage(img, 0, 0);
+			}
+			
+			function drawSelectedPolygonOnTop(context) {
+				if (selectedPolygon != null && selectedPolygon) {
+					var p = selectedPolygon;
+					context.beginPath();
+					context.fillStyle = p.color;
+						for (var i=0; i<p.vertex.length; i+=1) {
+							if (i === 0) {
+								context.moveTo(p.vertex[i][0]+p.offsetX, p.vertex[i][1]+p.offsetY);
+							}
+							context.lineTo(p.vertex[i][0]+p.offsetX, p.vertex[i][1]+p.offsetY);
+						}
+						context.lineTo(p.vertex[0][0]+p.offsetX, p.vertex[0][1]+p.offsetY);
+						context.fill();
+						context.closePath();
+				}
+			}
+
+			function drawMessageCursorPosition(canvas, context, evt) {
+				var currentPoint = getMousePos(canvas, evt);
+				var message = 'Mouse position: ' + currentPoint.x + ',' + currentPoint.y;
+
+				writeMessage(context, message, 'black');
+			}
+
+			function drawPolygons(context) {
+				
+				poligonos.forEach(function(p) {
+					context.beginPath();
+					context.fillStyle = p.color;
+					for (var i=0; i<p.vertex.length; i+=1) {
+						if (i === 0) {
+							context.moveTo(p.vertex[i][0]+p.offsetX, p.vertex[i][1]+p.offsetY);
+						}
+						context.lineTo(p.vertex[i][0]+p.offsetX, p.vertex[i][1]+p.offsetY);
+					}
+					context.lineTo(p.vertex[0][0]+p.offsetX, p.vertex[0][1]+p.offsetY);
+					context.fill();
+					context.closePath();
+				});	
+			}
+
+			function drawSombra(context) {
+				context.beginPath();
+				context.fillStyle = sombra.color;
+				for (var i=0; i<sombra.vertex.length; i+=1) {
+						if (i === 0) {
+							context.moveTo(sombra.vertex[i][0]+sombra.offsetX,
+							               sombra.vertex[i][1]+sombra.offsetY);
+						}
+						context.lineTo(sombra.vertex[i][0]+sombra.offsetX,
+						               sombra.vertex[i][1]+sombra.offsetY);
+				}
+				context.lineTo(sombra.vertex[0][0]+sombra.offsetX,
+				               sombra.vertex[0][1]+sombra.offsetY);
+				context.fill();
+				context.closePath();
+			}
+
+			function drawBboxPolygons(context) {
+				poligonos.forEach(function(p) {
+					var bbox = bboxPolygon(p.vertex);
+					context.beginPath();
+					context.strokeStyle = p.color;
+
+					context.moveTo(bbox.min.x+p.offsetX, bbox.min.y+p.offsetY);
+
+					context.lineTo(bbox.max.x+p.offsetX, bbox.min.y+p.offsetY);
+					context.lineTo(bbox.max.x+p.offsetX, bbox.max.y+p.offsetY);
+					context.lineTo(bbox.min.x+p.offsetX, bbox.max.y+p.offsetY);					
+					context.lineTo(bbox.min.x+p.offsetX, bbox.min.y+p.offsetY);
+
+					context.stroke();
+					context.closePath();
+				});	
+			}
+
+			function drawBboxSombra(context) {
+				var bbox = bboxPolygon(sombra.vertex);
+				var p = sombra;
+				context.beginPath();
+				context.strokeStyle = p.color;
+
+				context.moveTo(bbox.min.x+p.offsetX, bbox.min.y+p.offsetY);
+
+				context.lineTo(bbox.max.x+p.offsetX, bbox.min.y+p.offsetY);
+				context.lineTo(bbox.max.x+p.offsetX, bbox.max.y+p.offsetY);
+				context.lineTo(bbox.min.x+p.offsetX, bbox.max.y+p.offsetY);					
+				context.lineTo(bbox.min.x+p.offsetX, bbox.min.y+p.offsetY);
+
+				context.stroke();
+				context.closePath();
+			}
+
+			function drawTime(context) {
+				var message = 'Tempo: ' + Math.abs((time-MAX_TIME)).toString();
+				var color   = '#11445A' 
+				context.font = '40pt Sigmar One';
+				context.fillStyle = color;
+				context.fillText(message, 10, -20);
+			}
+
+
+			function getMousePos(canvas, evt) {
+				var rect = canvas.getBoundingClientRect();
+				if (!'clientX' in evt) {
+					evt.clientX = changedTouches[0].clientX;
+					evt.clientY = changedTouches[0].clientY;
+				}
+				return {
+					x: evt.clientX - rect.left,
+					y: evt.clientY - rect.top
+				};
+			}
+
+			function findSelectedPolygon(mousepos) {
+				var selectedPolygon = null;
+				poligonos.forEach(function(p) {
+					var result = insidePolygon(mousepos.x, mousepos.y, p.offsetX, p.offsetY, p.vertex);
+					if (result) {
+						selectedPolygon = p;
+					}
+				});
+
+				return selectedPolygon;
+			}
+
+			function limits(polygon) {
+				var bbox = bboxPolygon(polygon.vertex);
+				if (     bbox.min.x+polygon.offsetX < 0
+				      || bbox.max.x+polygon.offsetX > window.canvas.width
+					  || bbox.min.y+polygon.offsetY < 0
+					  || bbox.max.y+polygon.offsetY > window.canvas.height) {
+						  return true;
+					  }
+					  return false;
+			}
+
+			function bboxPolygon(vs) {
+				var maxX = -1, maxY = -1, minX = 999999, minY = 999999;
+				for (var i = 0; i < vs.length; i++) {
+					var x = vs[i][0];
+					var y = vs[i][1];
+
+					if (x < minX) {
+						minX = x;
+					}
+
+					if (x > maxX) {
+						maxX = x;
+					}
+
+					if (y < minY) {
+						minY = y;
+					}
+
+					if (y > maxY) {
+						maxY = y;
+					}
+				}
+
+				return {min: {x: minX, y: minY}, max: {x: maxX, y: maxY}};
+			}
+
+			function bboxPolygonTestAABBAABB(polygon, otherPolygon)
+			{
+				var a = bboxPolygon(polygon.vertex);
+				var b = bboxPolygon(otherPolygon.vertex);
+
+				a.min.x += polygon.offsetX;
+				a.max.x += polygon.offsetX;
+				a.min.y += polygon.offsetY;
+				a.max.y += polygon.offsetY;
+
+				b.min.x += otherPolygon.offsetX;
+				b.max.x += otherPolygon.offsetX;
+				b.min.y += otherPolygon.offsetY;
+				b.max.y += otherPolygon.offsetY;
+				
+				if (b.max.x < a.min.x)
+					return false;
+				if (b.min.x > a.max.x)
+					return false;
+				if (b.max.y < a.min.y)
+					return false;
+				if (b.min.y > a.max.y)
+					return false;
+				return true;
+			}
+
+			function insidePolygon(pointX, pointY, offsetX, offsetY, vs) {
+				// ray-casting algorithm based on
+				// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+				var x = pointX, y = pointY;
+
+				var inside = false;
+				for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+					var xi = vs[i][0]+offsetX, yi = vs[i][1]+offsetY;
+					var xj = vs[j][0]+offsetX, yj = vs[j][1]+offsetY;
+
+					var intersect = ((yi > y) != (yj > y))
+						&& (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+					if (intersect) inside = !inside;
+				}
+
+				return inside;
+			}
+
+			function dragSelectedPolygon(mousePos) {
+				if (startDrag === true &&
+						selectedPolygon !== null &&
+						 selectedPolygon.attached == false &&
+						 win == null) {
+
+					var lastOffsetX = selectedPolygon.offsetX;
+					var lastOffsetY = selectedPolygon.offsetY;
+
+					selectedPolygon.offsetX = mousePos.x - onClickOffsetCursorX;
+					selectedPolygon.offsetY = mousePos.y - onClickOffsetCursorY;
+					
+					var distanceX = Math.abs(selectedPolygon.offsetX - selectedPolygon.minX);
+					var distanceY = Math.abs(selectedPolygon.offsetY - selectedPolygon.minY);
+					
+					if (distanceX < 30 && distanceY < 30) {
+						selectedPolygon.offsetX = selectedPolygon.minX;
+					    selectedPolygon.offsetY = selectedPolygon.minY;
+						selectedPolygon.attached = true;
+					}
+
+					if (limits(selectedPolygon)) {
+						selectedPolygon.offsetX = lastOffsetX;
+						selectedPolygon.offsetY = lastOffsetY;
+					}
+				}
+			}
+
+			function normalizePolygon(polygon) {
+				var min = getMinXY(polygon.vertex);
+				for (var i=0; i<polygon.vertex.length; i++) {
+					polygon.vertex[i][0] -= min.x;
+					polygon.vertex[i][1] -= min.y;
+				}
+				polygon.offsetX = min.x;
+				polygon.offsetY = min.y;
+				polygon.minX = min.x;
+				polygon.minY = min.y;
+				
+				return polygon;
+			}
+
+			function getMinXY(vertex) {
+				var  minX = 999999, minY = 999999;
+				for (var i=0; i<vertex.length; i++) {
+					var x = vertex[i][0];
+					var y = vertex[i][1];
+
+					if (x < minX) {
+						minX = x;
+					}
+
+					if (y < minY) {
+						minY = y;
+					}
+				}
+
+				return {x : minX, y: minY};
+			}
+
+			// centraliza a sombra
+			function centralizeSombra() {
+				var bboxSombra    = bboxPolygon(sombra.vertex);
+				var sombraWidth   = bboxSombra.max.x - bboxSombra.min.x;
+				var sombraHeight  = bboxSombra.max.y - bboxSombra.min.y;
+
+				var centerXCanvas = canvas.width  / 2;
+				var centerYCanvas = canvas.height / 2;
+
+				var offsetToCenterX  = centerXCanvas - bboxSombra.min.x;
+				var offsetToCenterY  = centerYCanvas - bboxSombra.min.y;
+
+				var sombraWidthOffset  =   (sombraWidth / 2)  - offsetToCenterX;
+				var sombraHeightOffset =   (sombraHeight / 2) - offsetToCenterY;
+
+				for (var i=0; i< poligonos.length; i++) {
+					var polygon = poligonos[i];
+					for (var j=0; j<polygon.vertex.length; j++) {
+						polygon.vertex[j][0] -= sombraWidthOffset;
+						polygon.vertex[j][1] -= sombraHeightOffset;
+					}
+					normalizePolygon(polygon);
+				}
+
+				for (var j=0; j<sombra.vertex.length; j++) {
+					sombra.vertex[j][0] -= sombraWidthOffset;
+					sombra.vertex[j][1] -= sombraHeightOffset;
+				}
+			}
+
+			// coloca os poligonos na posição inicial
+			function polygonsGameStartPosition() {
+				for (var i=0; i<poligonos.length; i++) {
+					var polygon = poligonos[i];
+					var valid   = false;
+					var count   = 0;
+					
+					while (!valid) {
+
+						if (count > 10) {
+							break;
+						}
+						count += 1;
+
+						polygon.offsetX = Math.random() * window.canvas.width;
+						polygon.offsetY = Math.random() * window.canvas.height;
+
+						if (bboxPolygonTestAABBAABB(polygon, sombra)) {
+							valid = false;
+							continue;
+						} else {
+							valid = true;
+						}
+
+						if (limits(polygon)) {
+							valid = false;
+							count -= 1;
+							continue;
+						}
+				
+						for (var j=0; j<poligonos.length; j++) {
+							if (i == j) {continue;}
+							var otherPolygon = poligonos[j];
+							if (bboxPolygonTestAABBAABB(polygon, otherPolygon)) {
+								valid = false;
+								break;
+							} else {
+								valid = true;
+							}	
+						}
+
+					}
+				}
+			}
+
+			function decreaseTime() {
+				if (time <= 0) {
+					win = false;
+				}
+				if (win == null) {
+					time -= 1;
+				}
+			}
+			
+			function canvasMouseDown(evt) {
+				var mousePos    = getMousePos(canvas, evt);
+				var currentSelectedPolygon = findSelectedPolygon(mousePos);
+				if (currentSelectedPolygon !== null) {
+					selectedPolygon = currentSelectedPolygon;
+					startDrag       = true;
+
+					var min = getMinXY(selectedPolygon.vertex);
+					onClickOffsetCursorX = mousePos.x -
+						(min.x+selectedPolygon.offsetX)
+
+					onClickOffsetCursorY = mousePos.y -
+						(min.y+selectedPolygon.offsetY)
+
+				} else {
+					selectedPolygon = null;
+					startDrag       = false;
+
+					onClickOffsetCursorX = 0;
+					onClickOffsetCursorY = 0;
+
+				}
+			}
+			
+			function canvasMouseUp(evt) {
+				var mousePos    = getMousePos(canvas, evt);
+				startDrag       = false;
+				selectedPolygon = null;
+				//function insidePolygon(pointX, pointY, offsetX, offsetY, vs) {
+				var vs = [[restartButton.x                , restartButton.y],
+					 [restartButton.x+restartButton.w, restartButton.y],
+					 [restartButton.x                , restartButton.y+restartButton.h],
+					 [restartButton.x+restartButton.w, restartButton.y+restartButton.h]];
+					 
+				if (insidePolygon(mousePos.x, mousePos.y, 0, 0, vs)) {
+						restartButton.color = restartButton.secondColor;
+						restartButton.onclick();
+				}
+			}
+			
+			function canvasMouseMove(evt) {
+					// adiciona o mouse event para um objeto na window, pois o main loop necessita saber da posição atual do mouse
+					window.mouseEventObject = evt;
+					dragSelectedPolygon(getMousePos(canvas, evt));
+				}
+
+			// Construtor
+			window.onload = function() {
+				var canvas = document.getElementById("myCanvas");
+				context = canvas.getContext("2d");
+				setSize(canvas);
+
+				window.canvas = canvas;
+				window.context = context;
+				
+				canvas.addEventListener('mousedown', canvasMouseDown, false);
+				canvas.addEventListener('mouseup', canvasMouseUp, false);
+				canvas.addEventListener('mousemove', canvasMouseMove, false);
+				
+				canvas.addEventListener('touchstart', canvasMouseDown, false);
+				canvas.addEventListener('touchend', canvasMouseUp, false);
+				canvas.addEventListener('touchmove', canvasMouseMove, false);
+
+				initRestartButton(window.context);
+				centralizeSombra();
+				polygonsGameStartPosition()
+
+				// start Main loop
+				setInterval( mainloop, ONE_FRAME_TIME );
+				setInterval( decreaseTime, 1000 );
+			}
+
+			window.onresize = function() {
+				setSize(window.canvas);
+			};
+
+		</script>
     </body>
 </html>

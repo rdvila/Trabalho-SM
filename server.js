@@ -1,6 +1,7 @@
 var http = require('http');
 var jsonFile = require('jsonFile');
-var file = 'teste.json';
+var file = 'jogos.json';
+var equipes = 'equipes.json';
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
@@ -20,13 +21,31 @@ app.use(bodyParser.json());
 
 /* Retornar todos os exercícios */
 app.get('/', function (req, res) {
-  res.send(jsonFile.readFileSync(file));
+  //res.writeHeader(200, {"Content-Type": "text/html"});
+  res.sendFile('index.html');
+  
+});
+
+app.get('/jogos', function (req, res) {
+	res.send(jsonFile.readFileSync(file));
+});
+
+app.get('/equipes', function (req, res) {
+	res.send(jsonFile.readFileSync(equipes));
 });
 
 /* Salva um novo JSON de exercícios */
-app.post('/', function(request, response){
+app.post('/jogos', function(request, response){
 	var json = request.body;
     jsonFile.writeFile(file, json, function (err) {
+		console.error(err);
+	});
+	response.send('Salvo com sucesso!');
+});
+
+app.post('/equipes', function(request, response){
+	var json = request.body;
+    jsonFile.writeFile(equipes, json, function (err) {
 		console.error(err);
 	});
 	response.send('Salvo com sucesso!');
