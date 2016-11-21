@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Server</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="w3.css">
+        <link rel="stylesheet" href="w3-theme-dark-grey.css">
+        <link rel="stylesheet" href="style.css">
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+        <script src="jscolor.min.js"></script>
+        <script src="criar.js"></script>
+    </head>
+    <body>
+        <div ng-app="criarApp" ng-controller="criarCtrl" class="w3-container w3-padding-0">
+            <header class="w3-theme-light">
+                <form class="w3-form w3-row-padding">
+                    <div class="w3-col s1 m2 l2">
+                        <input class="w3-input w3-theme-light w3-text-theme w3-margin-left" type="text" name="nome" placeholder="Nome" autocomplete="off" ng-model="nome">
+                    </div>
+                    <div class="w3-col s1 m1 l1">
+                        <input class="w3-input w3-theme-light w3-text-theme w3-margin-left" type="number" step="1" name="dificuldade" placeholder="Dificuldade" autocomplete="off" ng-model="dificuldade">
+                    </div>  
+                    <div class="w3-col s1 m1 l1">
+                        <input class="w3-input w3-theme-light w3-text-theme w3-margin-left" type="number" step="1" name="tempo" placeholder="Tempo" autocomplete="off" ng-model="tempo">
+                    </div>           
+                    <button class="w3-btn w3-margin-left w3-theme" ng-disabled="!isValid()" ng-click="salvar()">Salvar</button>                                
+                    <button class="w3-btn w3-theme w3-margin-left" ng-click="limpar()">Limpar</button>
+                    <span class="w3-text-theme w3-margin-left w3-wide">Cor do polígono:</span>
+                    <button id="button" class="w3-btn w3-border jscolor {valueElement:null,value:'66ccff'}" style="width:50px; height:20px;"></button>
+                    <input class="w3-margin-left" type="file" id="imageLoader" name="imageLoader"/>                    
+                </form>
+            </header>
+            <canvas class="w3-margin-top" id="myCanvas"></canvas>
+        </div>
+    </body>
+</html>
