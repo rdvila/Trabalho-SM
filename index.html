@@ -39,13 +39,26 @@
 				draw(canvas, evt);
 		   };
 
+			var MAX_TIME = 2000;
 			var selectedPolygon = null;
 			var startDrag       = false;
 			var onClickOffsetCursorX = 0;
 			var onClickOffsetCursorY = 0;
-			var score = 0;
 			var time  = 2000;
 			var win = null;
+			
+			var restartButton = {x: 10,
+								 y: -20,
+								 w: 100,
+								 h: 60,
+								 text: "Reiniciar",
+								 color: "#eae500",
+								 firstColor: "#e500ce",
+								 secondColor: "#666666",
+							     onclick: function() {
+										restart(sombra, poligonos);
+									}	
+								 }
 			
 			//////////////////////// EXERCICIOS ////////////////////////
 			
@@ -323,6 +336,30 @@
 			var sombra = baleia.sombra;
 
 			var poligonos = baleia.poligonos;
+			
+			function restart(sombraSelecionada, poligonosSelecionados) {
+				sombra    = sombraSelecionada;
+				poligonos = poligonosSelecionados;
+				
+				selectedPolygon = null;
+				startDrag       = false;
+				onClickOffsetCursorX = 0;
+				onClickOffsetCursorY = 0;
+				time  = 2000;
+				win = null;
+				
+				centralizeSombra();
+				polygonsGameStartPosition()
+			}
+			
+		    function initRestartButton(context) {	
+				context.font = '40pt Sigmar One';			
+				var textSize = context.measureText(restartButton.text);
+				restartButton.w = textSize.width + 100;
+				restartButton.h = restartButton.h;
+				restartButton.x = window.canvas.width - textSize.width - 120;
+				restartButton.y = restartButton.y;
+			}
 
 			function setSize(canvas) {
 				canvas.width = window.innerWidth - 8,
@@ -360,12 +397,14 @@
 				//}
 
 				//drawBboxSombra(context);
+				
+				drawRestartButton(context);
+				
 				drawSombra(context);
 
 				//drawBboxPolygons(context);
 				drawPolygons(context);
 
-				drawScore(context);
 				drawTime(context);
 
 				drawSelectedPolygonOnTop(context);
@@ -381,9 +420,18 @@
 				}
 
 			}
+			
+			function drawRestartButton(context) {
+				context.font = '40pt Sigmar One';	
+				context.textBaseline = 'top';
+				context.fillStyle = restartButton.color;
+				context.fillText(restartButton.text, restartButton.x, restartButton.y);
+				restartButton.color = restartButton.firstColor;
+			}
 
 			function drawWinOrLoseMessage(context, message, color) {
 				var centerX = window.canvas.width / 2;
+				context.textBaseline = 'top';
 				context.font = '72pt Sigmar One';
 				context.fillStyle = color;
 
@@ -490,25 +538,21 @@
 				context.closePath();
 			}
 
-			function drawScore(context) {
-				var message = 'Pontos: ' + score.toString();
-				var color   = '#11445A' 
-				context.font = '40pt Sigmar One';
-				context.fillStyle = color;
-				context.fillText(message, 10, 45);
-			}
-
 			function drawTime(context) {
-				var message = 'Tempo: ' + time.toString();
+				var message = 'Tempo: ' + Math.abs((time-MAX_TIME)).toString();
 				var color   = '#11445A' 
 				context.font = '40pt Sigmar One';
 				context.fillStyle = color;
-				context.fillText(message, 10, 85);
+				context.fillText(message, 10, -20);
 			}
 
 
 			function getMousePos(canvas, evt) {
 				var rect = canvas.getBoundingClientRect();
+				if (!'clientX' in evt) {
+					evt.clientX = changedTouches[0].clientX;
+					evt.clientY = changedTouches[0].clientY;
+				}
 				return {
 					x: evt.clientX - rect.left,
 					y: evt.clientY - rect.top
@@ -628,7 +672,6 @@
 						selectedPolygon.offsetX = selectedPolygon.minX;
 					    selectedPolygon.offsetY = selectedPolygon.minY;
 						selectedPolygon.attached = true;
-						score += 10;
 					}
 
 					if (limits(selectedPolygon)) {
@@ -753,6 +796,52 @@
 					time -= 1;
 				}
 			}
+			
+			function canvasMouseDown(evt) {
+				var mousePos    = getMousePos(canvas, evt);
+				var currentSelectedPolygon = findSelectedPolygon(mousePos);
+				if (currentSelectedPolygon !== null) {
+					selectedPolygon = currentSelectedPolygon;
+					startDrag       = true;
+
+					var min = getMinXY(selectedPolygon.vertex);
+					onClickOffsetCursorX = mousePos.x -
+						(min.x+selectedPolygon.offsetX)
+
+					onClickOffsetCursorY = mousePos.y -
+						(min.y+selectedPolygon.offsetY)
+
+				} else {
+					selectedPolygon = null;
+					startDrag       = false;
+
+					onClickOffsetCursorX = 0;
+					onClickOffsetCursorY = 0;
+
+				}
+			}
+			
+			function canvasMouseUp(evt) {
+				var mousePos    = getMousePos(canvas, evt);
+				startDrag       = false;
+				selectedPolygon = null;
+				//function insidePolygon(pointX, pointY, offsetX, offsetY, vs) {
+				var vs = [[restartButton.x                , restartButton.y],
+					 [restartButton.x+restartButton.w, restartButton.y],
+					 [restartButton.x                , restartButton.y+restartButton.h],
+					 [restartButton.x+restartButton.w, restartButton.y+restartButton.h]];
+					 
+				if (insidePolygon(mousePos.x, mousePos.y, 0, 0, vs)) {
+						restartButton.color = restartButton.secondColor;
+						restartButton.onclick();
+				}
+			}
+			
+			function canvasMouseMove(evt) {
+					// adiciona o mouse event para um objeto na window, pois o main loop necessita saber da posição atual do mouse
+					window.mouseEventObject = evt;
+					dragSelectedPolygon(getMousePos(canvas, evt));
+				}
 
 			// Construtor
 			window.onload = function() {
@@ -762,44 +851,16 @@
 
 				window.canvas = canvas;
 				window.context = context;
+				
+				canvas.addEventListener('mousedown', canvasMouseDown, false);
+				canvas.addEventListener('mouseup', canvasMouseUp, false);
+				canvas.addEventListener('mousemove', canvasMouseMove, false);
+				
+				canvas.addEventListener('touchstart', canvasMouseDown, false);
+				canvas.addEventListener('touchend', canvasMouseUp, false);
+				canvas.addEventListener('touchmove', canvasMouseMove, false);
 
-				canvas.addEventListener('mousedown', function(evt) {
-					var mousePos    = getMousePos(canvas, evt);
-					var currentSelectedPolygon = findSelectedPolygon(mousePos);
-					if (currentSelectedPolygon !== null) {
-						selectedPolygon = currentSelectedPolygon;
-						startDrag       = true;
-
-						var min = getMinXY(selectedPolygon.vertex);
-						onClickOffsetCursorX = mousePos.x -
-							(min.x+selectedPolygon.offsetX)
-
-						onClickOffsetCursorY = mousePos.y -
-							(min.y+selectedPolygon.offsetY)
-
-					} else {
-						selectedPolygon = null;
-						startDrag       = false;
-
-						onClickOffsetCursorX = 0;
-						onClickOffsetCursorY = 0;
-
-					}
-				}, false);
-
-				canvas.addEventListener('mouseup', function(evt) {
-					var mousePos    = getMousePos(canvas, evt);
-					startDrag       = false;
-					selectedPolygon = null;
-				}, false);
-
-				canvas.addEventListener('mousemove', function(evt) {
-					// adiciona o mouse event para um objeto na window, pois o main loop necessita saber da posição atual do mouse
-					window.mouseEventObject = evt;
-					dragSelectedPolygon(getMousePos(canvas, evt));
-					
-				}, false);
-
+				initRestartButton(window.context);
 				centralizeSombra();
 				polygonsGameStartPosition()
 
