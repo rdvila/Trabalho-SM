@@ -4,8 +4,6 @@ app.controller('criarCtrl', function($scope, $http) {
     $scope.nome = "";
     $scope.tempo = undefined;
     $scope.dificuldade = undefined;
-    $scope.inicializar = function () {
-    };
 
     $scope.isValid = function () {
         return $scope.nome.trim() !== ""
@@ -15,13 +13,13 @@ app.controller('criarCtrl', function($scope, $http) {
 
     $scope.salvar = function () {
         //Código para salvar
+        //chamar com os argumentos:
+        //metodo($scope.nome, $scope.tempo, $scope.dificuldade);
     };
 
     $scope.limpar = function () {
-        //Código para limpar a area
-    };
-
-    $scope.inicializar();    
+        //Código para limpar o canvas
+    }; 
 });
 
 //Pontos da borda da imagem.
