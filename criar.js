@@ -1,0 +1,339 @@
+'use strict;';
+var app = angular.module('criarApp', []);
+app.controller('criarCtrl', function($scope, $http) {
+    $scope.nome = "";
+    $scope.tempo = undefined;
+    $scope.dificuldade = undefined;
+
+    $scope.isValid = function () {
+        return $scope.nome.trim() !== ""
+            && $scope.tempo > 0
+            && $scope.dificuldade > 0;
+    };
+
+    $scope.salvar = function () {
+        //Código para salvar
+        //chamar com os argumentos:
+        //metodo($scope.nome, $scope.tempo, $scope.dificuldade);
+    };
+
+    $scope.limpar = function () {
+        //Código para limpar o canvas
+    }; 
+});
+
+//Pontos da borda da imagem.
+var edge = [];
+
+//Formas geométricas da imagem.
+var polygons = [];
+
+//Polígono que está sendo desenhado.
+var currentPolygon = null;
+
+//Raio em que os pontos são selecionados.
+var radius = 5;
+
+//Flag que indica se estamos desenhando a borda
+var drawingEdge = true;
+
+//Cor do círculo.
+var circleColor = '#99ff99';
+
+//Cor da linha.
+var lineColor = '#000000';
+            
+function setSize(canvas) {
+    canvas.width = window.innerWidth - 8,
+    canvas.height = window.innerHeight - 8;
+}
+
+function drawCircle(context, point, radius) {
+    context.beginPath();
+    context.arc(point.x, point.y, radius, 0, 2 * Math.PI, false);
+    context.fillStyle = circleColor;
+    context.fill();
+    context.lineWidth = 0;
+    context.strokeStyle = circleColor;
+    context.stroke();
+    context.strokeStyle = lineColor;
+}
+
+function isInternal(midPoint, radius, otherPoint) {
+    var distance = Math.sqrt((Math.pow((midPoint.x - otherPoint.x), 2) + Math.pow((midPoint.y - otherPoint.y), 2)));
+    return distance < radius;
+}
+
+function getPointAt(points, point) {
+    for (var i = 0; i < points.length; i++) {
+        var p = points[i];
+        if (isInternal(p, radius, point)) {
+            return p;
+        }
+    }
+    return null;
+}
+
+function writeMessage(context, message) {
+    context.font = '18pt Calibri';
+    context.fillStyle = lineColor;
+    context.fillText(message, 10, 25);
+}
+
+//Desenha uma linha entre os pontos
+function drawLine(context, begin, end) {
+    context.beginPath();
+    context.moveTo(begin.x, begin.y);
+    context.lineTo(end.x, end.y);
+    context.closePath();
+    context.stroke();
+}
+
+function minX(points) {
+    var v = [];
+    points.forEach(function(point) {
+        v.push(point.x);
+    });
+    return Math.min.apply(null, v);
+}
+
+function minY(points) {
+    var v = [];
+    points.forEach(function(point) {
+        v.push(point.y);
+    });
+    return Math.min.apply(null, v);
+}
+
+//Retona um JSon com o exercício.
+function toJson() {
+    function toVertex(points) {
+        var v = [];
+        points.forEach(function(point) {
+            v.push([point.x, point.y]);
+        });
+        return v;
+    }
+    
+    function cast(polygons) {
+        var poligonos = [];
+        polygons.forEach(function(p) {
+            poligonos.push({
+                color: p.color,
+                connected: false,
+                offsetX: minX(p.points),
+                offsetY: minY(p.points),
+                minY: 0,
+                minX: 0,
+                attached: false,
+                vertex: toVertex(p.points)
+            });
+        });
+        return poligonos;
+    }
+    
+    var jSon = {};
+    jSon['nome'] = 'exercicio??'; //Quem criar a interface definir um input pra isso.
+    jSon['sombra'] = {
+        color: "#666666",
+        completed: false,
+        offsetX: 0,
+        offsetY: 0,
+        vertex: toVertex(edge)
+    };
+    jSon['dificuldade'] = 999; //Quem criar a interface definir um input pra isso.
+    jSon['tempo'] = 9999; //Quem criar a interface definir um input pra isso.
+    jSon['poligonos'] = cast(polygons);
+    
+    return jSon;
+}
+
+function isClosingPath(points, point) {
+    if (points.length < 2) {
+        return false;
+    }
+    var pathPoint = getPointAt(points, point);
+    if (pathPoint === null) {
+        return false;
+    }
+    var firstPoint = points[0];
+    if (pathPoint !== firstPoint) {
+        return false;
+    }
+    return true;
+}
+
+function drawPath(context, polygon) {
+    context.beginPath();
+    context.fillStyle = polygon.color;
+    context.strokeStyle = polygon.color;
+    var points = polygon.points;
+    for (var i = 0; i < points.length; i++) {
+        var p = points[i];
+        if (i === 0) {
+            context.moveTo(p.x, p.y);
+        } else {
+            context.lineTo(p.x, p.y);
+        }
+    }
+    context.fill();
+    context.closePath();
+    context.stroke();
+    context.strokeStyle = lineColor;
+}
+
+function drawLines(context, points) {
+    var length = points.length;
+    if (length === 0) {
+        return;
+    }
+    
+    for (var i = 1; i < length; i++) {
+        drawLine(context, points[i - 1], points[i]);
+    }
+}
+
+function isPointInPath(x) {
+    var length = points.length;
+    if (length < 2) {
+        return false;
+    } 
+
+    for (var i = 0; i < (length - 1); i++) {
+        if (isBetween(points[i], points[i + 1], x)) {
+            return true;
+        }
+    }
+    
+    if (isBetween(points[length - 1], points[0], x)) {
+        return true;
+    }
+    
+    return false;
+}
+
+function draw(canvas, evt) {
+    var context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    
+    var img = document.getElementById("img");
+    context.drawImage(img, 70, 70);
+    
+    //Desenha o ponto do mouse.
+    var currentPoint = getMousePos(canvas, evt);
+    var message = 'Mouse position: ' + currentPoint.x + ',' + currentPoint.y;
+    writeMessage(context, message);
+
+    //Desenha as linhas da borda.
+    drawLines(context, edge);
+    
+    var length = edge.length
+    if (drawingEdge && length > 0) {
+        //Cria uma linha entre o úlitmo
+        //ponto da borda e o ponto do mouse.
+        drawLine(context, edge[length - 1], currentPoint);
+        
+        //Cria um cirulo no primeiro ponto
+        //da borda para indicar que ela 
+        //pode ser 'finalizada'.
+        if (isClosingPath(edge, currentPoint)) {
+            drawCircle(context, edge[0], radius);
+        }                   
+    } else if (currentPolygon) {
+        //Desenha os polígonos.
+        polygons.forEach(function(p) {
+            drawPath(context, p);
+        });
+        
+        //Desenha um círculo ao redor do ponto da borda.
+        var point = getPointAt(edge, currentPoint);
+        if (point) {
+            drawCircle(context, point, radius);
+        }
+        
+        //Desenha as linhas do polígono atual.
+        drawLines(context, currentPolygon);
+        
+        length = currentPolygon.length;
+        if (length > 0) {
+            //Cria uma linha entre o úlitmo
+            //ponto do polígono e o ponto do mouse.
+            drawLine(context, currentPolygon[length - 1], currentPoint);
+        }
+    }               
+}
+
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+
+window.onload = function() {
+    var canvas = document.getElementById("myCanvas");
+    var context = canvas.getContext("2d");
+    //setSize(canvas);
+
+    window.canvas = canvas;
+    window.context = context;
+
+    /// Evento para carregar imagem
+    var imageLoader = document.getElementById('imageLoader');
+    
+    imageLoader.addEventListener('change', function (e){
+        var reader = new FileReader();
+        reader.onload = function(event){
+            var img = new Image();
+            img.onload = function(){
+                canvas.width = img.width;
+                canvas.height = img.height;
+                context.drawImage(img, 0, 0);
+            }
+            img.src = event.target.result;
+        }
+        reader.readAsDataURL(e.target.files[0]);     
+    }, false);
+
+    canvas.addEventListener('click', function(evt) {
+        var currentPoint = getMousePos(canvas, evt);
+        if (drawingEdge) {
+            if (isClosingPath(edge, currentPoint)) {
+                currentPoint = edge[0];
+                drawingEdge = false;
+                currentPolygon = [];
+            }
+            edge.push(currentPoint); 
+        } else if (currentPolygon) {
+            var edgePoint = getPointAt(edge, currentPoint);
+            if (edgePoint) {
+                if (isClosingPath(currentPolygon, currentPoint)) {
+                    console.log(toJson());
+                    polygons.push({points: currentPolygon, color: document.getElementById('button').style.backgroundColor});
+                    currentPolygon = [];
+                } else {
+                    currentPolygon.push(edgePoint);
+                }
+            }
+        }
+    }, false);
+
+    canvas.addEventListener('mousemove', function(evt) {
+        //draw(canvas, evt);
+    }, false);
+    
+    document.addEventListener('keypress', function(evt) {
+        var key = evt.key;
+        if (key === 'c') {
+            openPath = false;
+        } else if (key === 'o') {
+            closePath = false;
+        }
+        
+    }, false);
+}
+
+window.onresize = function() {
+    //setSize(window.canvas);
+};
