@@ -16,7 +16,7 @@
 			}
 		</style>
 	</head>
-	<img id='img' src='https://image.jimcdn.com/app/cms/image/transf/none/path/sb0abad0b84d20c80/image/i02e6db0113feb1f0/version/1407177959/tangram-rabbit.png' style="display:none;">
+	<img id='img' src='https://image.jimcdn.com/app/cms/image/transf/none/path/sb0abad0b84d20c80/image/i6b04e7b50500e9bc/version/1416343307/tangram-chicken.png' style="display:none;">
 	<body>
 		<canvas id="myCanvas"></canvas>
 		<script src="jscolor.min.js"></script>
@@ -89,6 +89,22 @@
 				context.stroke();
 			}
 			
+			function minX(points) {
+				var v = [];
+				points.forEach(function(point) {
+					v.push(point.x);
+				});
+				return Math.min.apply(null, v);
+			}
+			
+			function minY(points) {
+				var v = [];
+				points.forEach(function(point) {
+					v.push(point.y);
+				});
+				return Math.min.apply(null, v);
+			}
+			
 			//Retona um JSon com o exercício.
 			function toJson() {
 				function toVertex(points) {
@@ -104,15 +120,27 @@
 					polygons.forEach(function(p) {
 						poligonos.push({
 							color: p.color,
+							connected: false,
+							offsetX: minX(p.points),
+							offsetY: minY(p.points),
+							minY: 0,
+							minX: 0,
+							attached: false,
 							vertex: toVertex(p.points)
 						});
 					});
 					return poligonos;
 				}
-			
+				
 				var jSon = {};
 				jSon['nome'] = 'exercicio??'; //Quem criar a interface definir um input pra isso.
-				jSon['sombra'] = toVertex(edge);
+				jSon['sombra'] = {
+					color: "#666666",
+					completed: false,
+					offsetX: 0,
+					offsetY: 0,
+					vertex: toVertex(edge)
+				};
 				jSon['dificuldade'] = 999; //Quem criar a interface definir um input pra isso.
 				jSon['tempo'] = 9999; //Quem criar a interface definir um input pra isso.
 				jSon['poligonos'] = cast(polygons);
