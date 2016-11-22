@@ -16,12 +16,12 @@
 		
 <div id="id01" class="w3-modal">
     <div class="w3-modal-content">
-      <div class="w3-container w3-padding-0 w3-theme-dark ">
-        <span onclick="document.getElementById('id01').style.display='none'" class="w3-closebtn">&times;</span>
-<header class="w3-theme-light">
+      <div class="w3-container w3-padding-0 w3-theme-dark w3-content" style="width: 1200px;max-width:1200px">
+        <span onclick="fecharMenu()" class="w3-closebtn w3-theme">&times;</span>
+        <header class="w3-theme-light">
             <h1 class="w3-center w3-text-theme w3-margin-0 w3-padding-16">MENU</h1>
         </header>       
-        <div ng-app="menuApp" ng-controller="menuCtrl" class="w3-container w3-padding-0 w3-margin-top">
+        <div id="app" ng-app="menuApp" ng-controller="menuCtrl" class="w3-container w3-padding-0 w3-margin-top">
             <div class="w3-container w3-quarter">
                 <div class="w3-container w3-theme-dark">
                     <h2>Equipes</h2>
@@ -52,7 +52,7 @@
                             {{x.nome}}
                         </td>
                         <td ng-repeat="e in equipes" ng-show="e.jogando">
-                            <div class="w3-btn w3-theme" ng-click="jogar(x, e.id)">Jogar ({{pontos(e, x)}})</div>
+                            <div class="w3-btn w3-theme" ng-click="jogar(x, e)">Jogar ({{pontos(e, x)}})</div>
                         </td>
                         <!--<td>
                             <div class="w3-btn w3-theme" ng-click="excluir(x)">&times;</div>
@@ -69,23 +69,25 @@
 		<img id="background" width="0" height="0" src="background.jpg" style="visibility: hidden; float: right;">
 		<canvas id="myCanvas"></canvas>
 		<script>
+            function abrirMenu() {
+                document.getElementById('id01').style.display='block';
+            };
+
+            function fecharMenu() {
+                document.getElementById('id01').style.display='none';
+            };
 
 			///
 			///
 			/// Main Loop
 			///
 			///
-			var escopo;
 			var ONE_FRAME_TIME = 1000 / 30;
 			var mainloop = function() {
 				var evt = window.mouseEventObject;
 				update();
 				draw(canvas, evt);
 		    };
-			
-			function setEscopo(escopo) {
-				escopo = escopo;
-			};
 
 			var MAX_TIME = 2000;
 			var selectedPolygon = null;
@@ -1694,8 +1696,7 @@
 
 			var poligonos = baleia.poligonos;
 			
-			function restart(sombraSelecionada, poligonosSelecionados, scope) {
-				escopo    = scope;
+			function restart(sombraSelecionada, poligonosSelecionados) {
 				sombra    = sombraSelecionada;
 				poligonos = poligonosSelecionados;
 				
@@ -1741,22 +1742,29 @@
 				if (allAttached) {
 					win = true;
 					
-					escopo.equipes.forEach(function (e) {
-						if (e.id === escopo.jogando.equipe) {
-							var l = false;
+                    var escopo = angular.element(document.getElementById('app')).scope();
+                    escopo.$apply(function () {
+                        escopo.equipes.forEach(function (e) {
+                            if (e.id === escopo.jogando.equipe) {
+                                var achou = false;
 
-							e.exercicios.forEach(function (x) {
-								if (x.nome === escopo.jogando.jogo) {
-									x.pontos = time;
-									l = true;
-								}
-							});
-							
-							if (!l) {
-								e.exercicios.push({ "nome": escopo.jogando.jogo, "pontos": time });
-							}
-						}
-					});
+                                e.exercicios.forEach(function (x) {
+                                    if (x.nome === escopo.jogando.jogo) {
+                                        achou = true;
+                                        if (x.pontos > time) {
+                                            x.pontos = time;    
+                                        }                                                                               
+                                    }
+                                });
+                                
+                                if (!achou) {
+                                    e.exercicios.push({ "nome": escopo.jogando.jogo, "pontos": time });
+                                }
+                            }
+                        });
+                    });
+
+
 				}
 			}
 
@@ -2242,6 +2250,7 @@
 				// start Main loop
 				setInterval( mainloop, ONE_FRAME_TIME );
 				setInterval( decreaseTime, 1000 );
+                abrirMenu();
 			}
 
 			window.onresize = function() {

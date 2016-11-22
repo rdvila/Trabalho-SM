@@ -6,8 +6,6 @@ app.controller('menuCtrl', function($scope, $http) {
 	$scope.jogando = {};
 
     $scope.inicializar = function () {
-		setEscopo($scope);
-		
         $scope.$watch(
             "equipes",
             function (newValue, oldValue, scope) {
@@ -25,7 +23,7 @@ app.controller('menuCtrl', function($scope, $http) {
             true
         );
 		
-		$scope.equipes = [ { "id": 1, "nome": "Equipe A", "jogando": true, "total": 0, "exercicios": [ { "nome": "cavalo", "pontos": 10 }, { "nome": "rola", "pontos": 15 } ] }
+		$scope.equipes = [ { "id": 1, "nome": "Equipe A", "jogando": true, "total": 0, "exercicios": [] }
                          , { "id": 2, "nome": "Equipe B", "jogando": true, "total": 0, "exercicios": [] }
                          , { "id": 3, "nome": "Equipe C", "jogando": true, "total": 0, "exercicios": [] }
                          , { "id": 4, "nome": "Equipe D", "jogando": true, "total": 0, "exercicios": [] } ];
@@ -61,9 +59,10 @@ app.controller('menuCtrl', function($scope, $http) {
         });
     };
 
-    $scope.jogar = function (jogo, equipe) {
+    $scope.jogar = function (jogo, equipe) {        
 		$scope.jogando = { "jogo": jogo.nome, "equipe": equipe.id };
 		restart(jogo.sombra, jogo.poligonos, $scope);
+        fecharMenu();
     };
 
     $scope.pontos = function (equipe, jogo) {
