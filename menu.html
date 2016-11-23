@@ -1932,9 +1932,9 @@
 
 			function getMousePos(canvas, evt) {
 				var rect = canvas.getBoundingClientRect();
-				if (!'clientX' in evt) {
-					evt.clientX = changedTouches[0].clientX;
-					evt.clientY = changedTouches[0].clientY;
+				if (!('clientX' in evt)) {
+					evt.clientX = evt.changedTouches[0].clientX;
+					evt.clientY = evt.changedTouches[0].clientY;
 				}
 				return {
 					x: evt.clientX - rect.left,
